@@ -12,4 +12,11 @@ export class SearchPageComponent implements OnInit {
   ngOnInit() {
   }
 
+  getWebsiteURL() {
+    var website = (<HTMLInputElement>document.getElementById("url")).value;
+    console.log(website);
+  }
+
+  
+
 }
