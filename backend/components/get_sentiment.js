@@ -18,7 +18,6 @@ fs.readFile(filename, "utf-8", function(file_error, file_data) {
     var options = {
       html: file_data,
       features: {
-        concepts: {},
         keywords: {
             'emotion': true,
             'sentiment': true,
@@ -36,7 +35,7 @@ fs.readFile(filename, "utf-8", function(file_error, file_data) {
         console.log(err);
         return;
       }
-      console.log(JSON.stringify(res));
+      let output = JSON.stringify(res);
     });
   }
 });
