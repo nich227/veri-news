@@ -19,7 +19,16 @@ fs.readFile(filename, "utf-8", function(file_error, file_data) {
       html: file_data,
       features: {
         concepts: {},
-        keywords: {}
+        keywords: {
+            'emotion': true,
+            'sentiment': true,
+            'limit': 100
+        },
+        entities: {
+            'emotion': true,
+            'sentiment': true,
+            'limit': 10
+        }
       }
     };
     nlu.analyze(options, function(err, res) {
@@ -27,7 +36,7 @@ fs.readFile(filename, "utf-8", function(file_error, file_data) {
         console.log(err);
         return;
       }
-      console.log(res);
+      console.log(JSON.stringify(res));
     });
   }
 });
