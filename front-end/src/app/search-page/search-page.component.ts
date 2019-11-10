@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { EventEmitter } from 'events';
 
+declare var particlesJS: any;
 
 @Component({
   selector: 'app-search-page',
@@ -16,6 +17,7 @@ export class SearchPageComponent implements OnInit {
   constructor(private router: Router, private http: HttpClient) { }
 
   ngOnInit() {
+    particlesJS.load('particles-js', 'assets/data/particlesjs-config.json', function() { console.log('callback - particles.js config loaded'); });
   }
 
   /*Function getWebsiteURL() will be called when the getData function calls it
