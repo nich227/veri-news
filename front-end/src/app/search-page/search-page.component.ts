@@ -32,10 +32,12 @@ export class SearchPageComponent implements OnInit {
    *This function will mess with the json data
    */ 
   get_json(website) {
-    $.getJSON("https://raw.githubusercontent.com/nich227/ncm-utd/master/src/assets/events.json", function (json) {
-    // return this.http.jsonp("localhost:3000/content?url=website", 'callback');
-      console.log(JSON.stringify(json));
+    $.getJSON("https://obscure-reef-11935.herokuapp.com/", function (json) {
+      // console.log(JSON.stringify(json));
       //bias-score
+       console.log(json.bias_score);
+       console.log(json.top_bias_phrases);
+      
       //top-bias-phrases (is json form)
     });
     this.router.navigate(['/','result']);
