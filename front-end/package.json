@@ -21,6 +21,7 @@
     "@angular/platform-browser-dynamic": "~8.2.13",
     "@angular/router": "~8.2.13",
     "@types/jquery": "^3.3.31",
+    "angular-tag-cloud-module": "^3.8.1",
     "ng-beautiful-gauges": "^6.0.4",
     "particles.js": "^2.0.0",
     "rxjs": "^6.5.3",

@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule} from '@angular/common/http';
 import {GaugesModule} from 'ng-beautiful-gauges';
+import { TagCloudModule } from 'angular-tag-cloud-module';
+
 import { StateService } from './state.service';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -23,7 +25,8 @@ import { ResultsPageComponent } from './results-page/results-page.component';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    GaugesModule
+    GaugesModule,
+    TagCloudModule
   ],
   providers: [StateService],
   bootstrap: [AppComponent]
