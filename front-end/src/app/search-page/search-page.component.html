@@ -2,21 +2,21 @@
 <html>
 
 <body>
-    <div class="site-wrapper-inner">
-            <img src="../../assets/images/logo.png" alt="logo">
-        <div class="inner cover">
-            <h1 class="cover-heading">Please enter a website to check the bias on.</h1>
-        </div>
-
-        <script src="search-page.component.ts"></script>
- 
-        <nav class="navbar navbar-light bg-light" id="url_box">
-                <form class="form-inline">
-                  <input class="form-control-lg input-lg" type="text" placeholder="Website URL" id="url" aria-label="Bias Check">
-                  <button class="btn btn-outline-success my-2 my-sm-0" (click)="getWebsiteURL()" type="button">Bias Check</button>
-                </form>
-              </nav>
+  <div class="site-wrapper-inner">
+    <img src="../../assets/images/logo.png" alt="logo">
+    <div class="inner cover">
+      <h1 class="cover-heading">Please enter a website to check the bias on.</h1>
     </div>
+
+    <script src="search-page.component.ts"></script>
+
+    <nav class="navbar navbar-light bg-light" id="url_box">
+      <form class="form-inline">
+        <input class="form-control-lg input-lg" type="text" placeholder="Website URL" id="url" aria-label="Bias Check">
+        <button class="btn btn-outline-success my-2 my-sm-0" (click)="getWebsiteURL()" type="submit">Bias Check</button>
+      </form>
+    </nav>
+  </div>
 </body>
 
 </html>
