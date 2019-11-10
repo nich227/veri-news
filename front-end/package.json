@@ -24,7 +24,7 @@
     "angular-tag-cloud-module": "^3.8.1",
     "ng-beautiful-gauges": "^6.0.4",
     "particles.js": "^2.0.0",
-    "rxjs": "^6.4.0",
+    "rxjs": "^6.5.3",
     "rxjs-compat": "^6.5.3",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
