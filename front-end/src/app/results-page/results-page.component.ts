@@ -30,7 +30,8 @@ export class ResultsPageComponent implements OnInit {
     let final_score = JSON.parse(this.bias).bias_score * 10;
     $(document).ready(function() {
       $('#lin-gauge').attr('value', final_score);
-      jsonObj.top_bias_phrases.forEach(obj => {
+      console.log(jsonObj.top_bias_phrases);
+      JSON.parse(jsonObj.top_bias_phrases).forEach(obj => {
         this.data.push({text: obj.text, weight: obj.sentiment, color: '#ffffff'});
       });
     });
