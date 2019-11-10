@@ -1,90 +1,108 @@
-"use strict";
-
 var fs = require("fs");
 var NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1.js");
 require("dotenv").config({ silent: true }); //  optional
 
 var nlu = new NaturalLanguageUnderstandingV1({
+  //authenticator: new IamAuthenticator({ apikey: "eEvNCsoXt_QRo4WbUk-mnAX1xAVBb8-WoKFJeecrKQ3_" }),
   version: "2018-04-05"
+  //url: "https://gateway.watsonplatform.net/natural-language-understanding/api/"
 });
 
-var filename = "../res/test.html";
-fs.readFile(filename, "utf-8", function(file_error, file_data) {
-  if (file_error) {
-    console.log(file_error);
-  } else {
-    var options = {
-      html: file_data,
-      features: {
-        keywords: {
-            'emotion': true,
-            'sentiment': true,
-            'limit': 100
-        },
-        entities: {
-            'emotion': true,
-            'sentiment': true,
-            'limit': 10
-        }
-      }
-    };
-    nlu.analyze(options, function(err, res) {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      let output = JSON.stringify(res);
-      console.log("OUT: " + output);
-      let jsonObj = JSON.parse(output);
-      let sum = 0, sumRelevance = 0;
-      let numWords = 0;
-      let relevanceScores = [], relevanceSquareDiffs = [];
-      let avgEmotionScore = 0;
-      jsonObj.result.keywords.forEach (word => {
-        let emotionScore = (word.emotion.sadness + word.emotion.joy + word.emotion.fear + word.emotion.disgust + word.emotion.anger)/5;
-        console.log("Sent: " + word.sentiment.score + " // Emo. Avg: " + emotionScore + " // Rel: " + word.relevance + " // Text: " + word.text);
-        sum += Math.abs(word.sentiment.score);
-        avgEmotionScore += emotionScore;
-        relevanceScores.push(word.relevance);
-        numWords++;
-      })
-      console.log("Words: " + numWords)
-      console.log("Average sentiment: " + (sum/numWords));
-      console.log("Average Emotional Score: " + (avgEmotionScore/numWords));
-      //console.log("Words: " + numWords);
-      //console.log("Relevance scores: " + relevanceScores);
-      /*
-      let rSum = 0;
-      relevanceScores.forEach(val => {
-        rSum += val;
-      })
-      let rAvg = rSum/relevanceScores.length;
-      //console.log("Relevance Avg: " + rAvg);
-      let rStdSummation = 0;
-      relevanceScores.forEach(val => {
-        relevanceSquareDiffs.push(Math.pow((val - rAvg), 2));
-      })
-      let sqDiffAvg = 0;
-      relevanceSquareDiffs.forEach(val => {
-        sqDiffAvg += val;
-      })
-      sqDiffAvg = sqDiffAvg/relevanceSquareDiffs.length;
+var bias_score = 0;
+  var top_bias_phrases = [];
 
-      let rStdDev = Math.sqrt(sqDiffAvg);
-      console.log("Relevance avg: " + rAvg + ", standard dev: " + rStdDev);
-      let excludeLimit = rAvg - rStdDev;
-
-      sum = 0;
-      numWords = 0;
-      jsonObj.result.keywords.forEach (word => {
-        if(word.relevance > rAvg) {
-          sum += word.sentiment.score;
-          numWords++;
+  var filename = "../res/test.html";
+  fs.readFile(filename, "utf-8", function(file_error, file_data) {
+    if (file_error) {
+      console.log(file_error);
+    } else {
+      var options = {
+        html: file_data,
+        features: {
+          keywords: {
+            emotion: true,
+            sentiment: true,
+            limit: 100
+          },
+          entities: {
+            emotion: true,
+            sentiment: true,
+            limit: 10
+          }
         }
-      })
-      console.log("Improved sentiment avg: " + (sum/numWords));
-      console.log("Words: " + numWords);
-      */
-    });
-  }
-});
+      };
+      nlu.analyze(options, function(err, res) {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        let output = JSON.stringify(res);
+        console.log("OUT: " + output);
+        let jsonObj = JSON.parse(output);
+        let sumSentiment = 0,
+          sumRelevance = 0,
+          sumEmotionScore = 0;
+        let numWords = 0;
+
+        //Calculate average relevance
+        let relevanceSum = 0;
+        let relevanceSize = 0;
+        jsonObj.result.keywords.forEach(word => {
+          relevanceSum += word.relevance;
+          relevanceSize++;
+        });
+        let relevanceAvg = relevanceSum / relevanceSize;
+
+        //Ignore all relevances smaller than average
+        jsonObj.result.keywords.forEach(word => {
+          if (word.relevance < relevanceAvg) word.relevance = 0;
+        });
+
+        //Analyzing each keyword
+        jsonObj.result.keywords.forEach(word => {
+          let emotionScore =
+            (word.emotion.sadness +
+              word.emotion.joy +
+              word.emotion.fear +
+              word.emotion.disgust +
+              word.emotion.anger) /
+            5;
+          console.log(
+            "Sent: " +
+              word.sentiment.score +
+              " // Emo. Avg: " +
+              emotionScore +
+              " // Rel: " +
+              word.relevance +
+              " // Text: " +
+              word.text
+          );
+          if (word.relevance != 0) {
+            sumSentiment += Math.abs(word.sentiment.score);
+            sumEmotionScore += emotionScore;
+            numWords++;
+            let phrase = {
+              text: word.text,
+              sentiment: word.sentiment.score,
+              sadness: word.emotion.sadness,
+              joy: word.emotion.joy,
+              fear: word.emotion.fear,
+              disgust: word.emotion.disgust,
+              anger: word.emotion.anger
+            };
+            top_bias_phrases.push(phrase);
+          }
+        });
+
+        console.log("Words: " + numWords);
+        console.log("Average sentiment: " + sumSentiment / numWords);
+        console.log("Average Emotional Score: " + sumEmotionScore / numWords);
+
+        bias_score =
+          0.5 * (sumSentiment / numWords) + 0.5 * (sumEmotionScore / numWords);
+        console.log("Total Bias Score: " + bias_score);
+
+        console.log("Top bias phrases: " + JSON.stringify(top_bias_phrases));
+      });
+    }
+  });
