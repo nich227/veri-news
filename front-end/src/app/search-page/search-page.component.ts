@@ -1,9 +1,11 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { EventEmitter } from 'events';
+import { StateService } from '../state.service';
+
 
 declare var particlesJS: any;
 
@@ -14,12 +16,13 @@ declare var particlesJS: any;
 })
 export class SearchPageComponent implements OnInit {
 
-  message = "helloworld";
+  input_json: string;
 
-  constructor(private router: Router, private http: HttpClient) { }
+  constructor(private router: Router, private http: HttpClient, private state: StateService) { }
 
   ngOnInit() {
-    particlesJS.load('particles-js', 'assets/data/particlesjs-config.json', function() { console.log('callback - particles.js config loaded'); });
+    particlesJS.load('particles-js', 'assets/data/particlesjs-config.json', function () { console.log('callback - particles.js config loaded'); });
+    this.state.json.subscribe(input_json => this.input_json = input_json)
   }
 
   /*Function getWebsiteURL() will be called when the getData function calls it
@@ -33,26 +36,27 @@ export class SearchPageComponent implements OnInit {
 
   /*Function get_json takes in a one parameter website which is the url that the api will call.
    *This function will mess with the json data
-   */ 
+   */
   // @Output() public score = new EventEmitter();
   // @Output() public phrases = new EventEmitter();
-  get_json(website) {
+  async get_json(website) {
     var url = "https://obscure-reef-11935.herokuapp.com";
     var url1 = url + "/contents?url=" + website;
-    $.getJSON(url1, function (json) {   
+    var tmp;
+
+    $.ajaxSetup({
+      async: false
+    });
+
+    $.getJSON(url1, function (json) {
       console.log(json);
-      if(json == "200"){
-        $.getJSON(url, function (json) {   
-          console.log(json);
+      if (json == "200") {
+        $.getJSON(url, function (json) {
+            tmp = json;
         });
       }
-
-      // this.sharedService.set_json(json);  
-      this.message = "hi";  
-      // json.bias_score;
-      // json.top_bias_phrases;
     });
-    // this.sharedService.set_json("hi");
-    this.router.navigate(['/','result']);
+    this.state.changeJSON(JSON.stringify(tmp));
+    this.router.navigate(['/', 'result']);
   }
 }
