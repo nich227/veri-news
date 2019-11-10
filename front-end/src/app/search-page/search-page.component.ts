@@ -30,7 +30,7 @@ export class SearchPageComponent implements OnInit {
    *This function will mess with the json data
    */ 
   get_json(website) {
-    $.getJSON("https://raw.githubusercontent.com/nich227/ncm-utd/master/src/assets/events.json", function (json) {
+    $.getJSON("https://obscure-reef-11935.herokuapp.com/", function (json) {
     // return this.http.jsonp("localhost:3000/content?url=website", 'callback');
       console.log(JSON.stringify(json));
       //bias-score
