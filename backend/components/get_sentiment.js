@@ -89,7 +89,7 @@ module.exports = function() {
         bias_score =
           0.5 * (sumSentiment / numWords) + 0.5 * (sumEmotionScore / numWords);
           
-          let sentiment = {'bias-score':JSON.stringify(bias_score), 'top-bias-phrases':JSON.stringify(top_bias_phrases)};
+          let sentiment = {'bias_score':JSON.stringify(bias_score), 'top_bias_phrases':JSON.stringify(top_bias_phrases)};
           resolve(returnSentiment(sentiment));
           //fs.writeFileSync('sentiment-analyze.json', JSON.stringify(sentiment));
       });
