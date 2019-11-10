@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 })
 export class SearchPageComponent implements OnInit {
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private router: Router, private http: HttpClient) { }
 
   ngOnInit() {
   }
@@ -33,10 +33,10 @@ export class SearchPageComponent implements OnInit {
     $.getJSON("https://raw.githubusercontent.com/nich227/ncm-utd/master/src/assets/events.json", function (json) {
     // return this.http.jsonp("localhost:3000/content?url=website", 'callback');
       console.log(JSON.stringify(json));
-      // this.router.navigate(['result']);
       //bias-score
       //top-bias-phrases (is json form)
     });
+    this.router.navigate(['/','result']);
   }
   
 }
