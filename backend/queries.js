@@ -1,4 +1,5 @@
-const sentiment = require('./components/get_sentiment')
+const processSentiment = require("./components/get_sentiment");
+let output = processSentiment();
 
 const getContents = (request, response) => {
     var fs = require('fs')
@@ -7,8 +8,11 @@ const getContents = (request, response) => {
     var source = request.query["url"];
     var outputFile = 'outputFile.html';
     wget.download(source, outputFile);
-
-    response.status(200).json({message: "GET CONTENTS STATUS : OK!"})
+    fs.readFile('sentiment-analyze.json', (err, data) => {
+        if(err) throw err;
+        let output = JSON.parse(data);
+        response.json(output);
+      });
 }
 
 module.exports = {

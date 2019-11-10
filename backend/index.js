@@ -16,13 +16,9 @@ app.use(
 let output = processSentiment();
 
 app.get("/", (request, response) => {
-  fs.readFile('sentiment-analyze.json', (err, data) => {
-    if(err) throw err;
-    let output = JSON.parse(data);
-    response.json(output);
-  });
+    response.json("API STATUS : OK");
 });
-//TODO: Make path /contents/:url
+
 app.get("/contents", db.getContents);
 
 app.listen(port, () => {
