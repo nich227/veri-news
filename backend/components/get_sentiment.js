@@ -12,7 +12,7 @@ module.exports = function() {
   var bias_score = 0;
   var top_bias_phrases = [];
 
-  var filename = "../backend/res/test.html";
+  var filename = "../backend/outputFile.html";
   fs.readFile(filename, "utf-8", function(file_error, file_data) {
     if (file_error) {
       console.log(file_error);
