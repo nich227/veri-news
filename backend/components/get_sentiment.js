@@ -13,6 +13,8 @@ module.exports = function() {
   var top_bias_phrases = [];
 
   var filename = "outputFile.html";
+  return new Promise((resolve, reject) => {
+
   fs.readFile(filename, "utf-8", function(file_error, file_data) {
     if (file_error) {
       console.log(file_error);
@@ -88,8 +90,14 @@ module.exports = function() {
           0.5 * (sumSentiment / numWords) + 0.5 * (sumEmotionScore / numWords);
           
           let sentiment = {'bias-score':JSON.stringify(bias_score), 'top-bias-phrases':JSON.stringify(top_bias_phrases)};
-          fs.writeFileSync('sentiment-analyze.json', JSON.stringify(sentiment));
+          resolve(returnSentiment(sentiment));
+          //fs.writeFileSync('sentiment-analyze.json', JSON.stringify(sentiment));
       });
     }
   });
+  });
 };
+
+function returnSentiment(sentiment) {
+  return sentiment;
+}

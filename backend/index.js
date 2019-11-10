@@ -14,14 +14,10 @@ app.use(
 
 app.get("/contents", db.getContents);
 
-app.get("/", (request, response) => {
+app.get("/", async (request, response) => {
   const processSentiment = require("./components/get_sentiment");
-  let output = processSentiment();
-  fs.readFile('sentiment-analyze.json', (err, data) => {
-    if(err) throw err;
-    let output = JSON.parse(data);
-    response.json(output);
-  });
+  let output = await processSentiment();
+  response.json(output);
 });
 
 app.listen(port, () => {
