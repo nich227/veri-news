@@ -1,6 +1,5 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const processSentiment = require("./components/get_sentiment");
 const app = express();
 const db = require("./queries");
 const port = 3000;
@@ -13,13 +12,17 @@ app.use(
   })
 );
 
-let output = processSentiment();
+app.get("/contents", db.getContents);
 
 app.get("/", (request, response) => {
-    response.json("API STATUS : OK");
+  const processSentiment = require("./components/get_sentiment");
+  let output = processSentiment();
+  fs.readFile('sentiment-analyze.json', (err, data) => {
+    if(err) throw err;
+    let output = JSON.parse(data);
+    response.json(output);
+  });
 });
-
-app.get("/contents", db.getContents);
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);

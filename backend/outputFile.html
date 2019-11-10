@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8">
+		<title>Quickly Copy a File or Folder Path to the Clipboard in Mac OS X  |   OSXDaily</title>
+		<link rel='dns-prefetch' href='//s0.wp.com' />
+<link rel='dns-prefetch' href='//ajax.googleapis.com' />
+<link rel='dns-prefetch' href='//s.w.org' />
+<link rel="alternate" type="application/rss+xml" title="OS X Daily &raquo; Quickly Copy a File or Folder Path to the Clipboard in Mac OS X Comments Feed" href="http://osxdaily.com/2013/06/19/copy-file-folder-path-mac-os-x/feed/" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/svg\/","svgExt":".svg","source":{"wpemoji":"http:\/\/cdn.osxdaily.com\/wp-includes\/js\/wp-emoji.js?ver=5.2.4","twemoji":"http:\/\/cdn.osxdaily.com\/wp-includes\/js\/twemoji.js?ver=5.2.4"}};
+			/**
+ * @output wp-includes/js/wp-emoji-loader.js
+ */
+
+( function( window, document, settings ) {
+	var src, ready, ii, tests;
+
+	// Create a canvas element for testing native browser support of emoji.
+	var canvas = document.createElement( 'canvas' );
+	var context = canvas.getContext && canvas.getContext( '2d' );
+
+	/**
+	 * Checks if two sets of Emoji characters render the same visually.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @private
+	 *
+	 * @param {number[]} set1 Set of Emoji character codes.
+	 * @param {number[]} set2 Set of Emoji character codes.
+	 *
+	 * @return {boolean} True if the two sets render the same.
+	 */
+	function emojiSetsRenderIdentically( set1, set2 ) {
+		var stringFromCharCode = String.fromCharCode;
+
+		// Cleanup from previous test.
+		context.clearRect( 0, 0, canvas.width, canvas.height );
+		context.fillText( stringFromCharCode.apply( this, set1 ), 0, 0 );
+		var rendered1 = canvas.toDataURL();
+
+		// Cleanup from previous test.
+		context.clearRect( 0, 0, canvas.width, canvas.height );
+		context.fillText( stringFromCharCode.apply( this, set2 ), 0, 0 );
+		var rendered2 = canvas.toDataURL();
+
+		return rendered1 === rendered2;
+	}
+
+	/**
+	 * Detects if the browser supports rendering emoji or flag emoji.
+	 *
+	 * Flag emoji are a single glyph made of two characters, so some browsers
+	 * (notably, Firefox OS X) don't support them.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @private
+	 *
+	 * @param {string} type Whether to test for support of "flag" or "emoji".
+	 *
+	 * @return {boolean} True if the browser can render emoji, false if it cannot.
+	 */
+	function browserSupportsEmoji( type ) {
+		var isIdentical;
+
+		if ( ! context || ! context.fillText ) {
+			return false;
+		}
+
+		/*
+		 * Chrome on OS X added native emoji rendering in M41. Unfortunately,
+		 * it doesn't work when the font is bolder than 500 weight. So, we
+		 * check for bold rendering support to avoid invisible emoji in Chrome.
+		 */
+		context.textBaseline = 'top';
+		context.font = '600 32px Arial';
+
+		switch ( type ) {
+			case 'flag':
+				/*
+				 * Test for UN flag compatibility. This is the least supported of the letter locale flags,
+				 * so gives us an easy test for full support.
+				 *
+				 * To test for support, we try to render it, and compare the rendering to how it would look if
+				 * the browser doesn't render it correctly ([U] + [N]).
+				 */
+				isIdentical = emojiSetsRenderIdentically(
+					[ 0xD83C, 0xDDFA, 0xD83C, 0xDDF3 ],
+					[ 0xD83C, 0xDDFA, 0x200B, 0xD83C, 0xDDF3 ]
+				);
+
+				if ( isIdentical ) {
+					return false;
+				}
+
+				/*
+				 * Test for English flag compatibility. England is a country in the United Kingdom, it
+				 * does not have a two letter locale code but rather an five letter sub-division code.
+				 *
+				 * To test for support, we try to render it, and compare the rendering to how it would look if
+				 * the browser doesn't render it correctly (black flag emoji + [G] + [B] + [E] + [N] + [G]).
+				 */
+				isIdentical = emojiSetsRenderIdentically(
+					[ 0xD83C, 0xDFF4, 0xDB40, 0xDC67, 0xDB40, 0xDC62, 0xDB40, 0xDC65, 0xDB40, 0xDC6E, 0xDB40, 0xDC67, 0xDB40, 0xDC7F ],
+					[ 0xD83C, 0xDFF4, 0x200B, 0xDB40, 0xDC67, 0x200B, 0xDB40, 0xDC62, 0x200B, 0xDB40, 0xDC65, 0x200B, 0xDB40, 0xDC6E, 0x200B, 0xDB40, 0xDC67, 0x200B, 0xDB40, 0xDC7F ]
+				);
+
+				return ! isIdentical;
+			case 'emoji':
+				/*
+				 * Love is love.
+				 *
+				 * To test for Emoji 12 support, try to render a new emoji: men holding hands, with different skin
+				 * tone modifiers.
+				 *
+				 * When updating this test for future Emoji releases, ensure that individual emoji that make up the
+				 * sequence come from older emoji standards.
+				 */
+				isIdentical = emojiSetsRenderIdentically(
+					[0xD83D, 0xDC68, 0xD83C, 0xDFFE, 0x200D, 0xD83E, 0xDD1D, 0x200D, 0xD83D, 0xDC68, 0xD83C, 0xDFFC],
+					[0xD83D, 0xDC68, 0xD83C, 0xDFFE, 0x200B, 0xD83E, 0xDD1D, 0x200B, 0xD83D, 0xDC68, 0xD83C, 0xDFFC]
+				);
+
+				return ! isIdentical;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Adds a script to the head of the document.
+	 *
+	 * @ignore
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param {Object} src The url where the script is located.
+	 * @return {void}
+	 */
+	function addScript( src ) {
+		var script = document.createElement( 'script' );
+
+		script.src = src;
+		script.defer = script.type = 'text/javascript';
+		document.getElementsByTagName( 'head' )[0].appendChild( script );
+	}
+
+	tests = Array( 'flag', 'emoji' );
+
+	settings.supports = {
+		everything: true,
+		everythingExceptFlag: true
+	};
+
+	/*
+	 * Tests the browser support for flag emojis and other emojis, and adjusts the
+	 * support settings accordingly.
+	 */
+	for( ii = 0; ii < tests.length; ii++ ) {
+		settings.supports[ tests[ ii ] ] = browserSupportsEmoji( tests[ ii ] );
+
+		settings.supports.everything = settings.supports.everything && settings.supports[ tests[ ii ] ];
+
+		if ( 'flag' !== tests[ ii ] ) {
+			settings.supports.everythingExceptFlag = settings.supports.everythingExceptFlag && settings.supports[ tests[ ii ] ];
+		}
+	}
+
+	settings.supports.everythingExceptFlag = settings.supports.everythingExceptFlag && ! settings.supports.flag;
+
+	// Sets DOMReady to false and assigns a ready function to settings.
+	settings.DOMReady = false;
+	settings.readyCallback = function() {
+		settings.DOMReady = true;
+	};
+
+	// When the browser can not render everything we need to load a polyfill.
+	if ( ! settings.supports.everything ) {
+		ready = function() {
+			settings.readyCallback();
+		};
+
+		/*
+		 * Cross-browser version of adding a dom ready event.
+		 */
+		if ( document.addEventListener ) {
+			document.addEventListener( 'DOMContentLoaded', ready, false );
+			window.addEventListener( 'load', ready, false );
+		} else {
+			window.attachEvent( 'onload', ready );
+			document.attachEvent( 'onreadystatechange', function() {
+				if ( 'complete' === document.readyState ) {
+					settings.readyCallback();
+				}
+			} );
+		}
+
+		src = settings.source || {};
+
+		if ( src.concatemoji ) {
+			addScript( src.concatemoji );
+		} else if ( src.wpemoji && src.twemoji ) {
+			addScript( src.twemoji );
+			addScript( src.wpemoji );
+		}
+	}
+
+} )( window, document, window._wpemojiSettings );
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel='stylesheet' id='jetpack_related-posts-css'  href='http://cdn.osxdaily.com/wp-content/plugins/jetpack/modules/related-posts/related-posts.css?ver=20190204' type='text/css' media='all' />
+<link rel='stylesheet' id='foundation-framework-style-css'  href='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/themes/foundation/default/style.css?ver=939b77e6da9a9b591dfc5ce10c4767ac' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-block-library-css'  href='http://cdn.osxdaily.com/wp-includes/css/dist/block-library/style.css?ver=5.2.4' type='text/css' media='all' />
+<link rel='stylesheet' id='cookie-notice-front-css'  href='http://cdn.osxdaily.com/wp-content/plugins/cookie-notice/css/front.css?ver=5.2.4' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-syntax-css-css'  href='http://cdn.osxdaily.com/wp-content/plugins/wp-syntax/css/wp-syntax.css?ver=1.1' type='text/css' media='all' />
+<link rel='stylesheet' id='wptouch-theme-css-css'  href='http://cdn.osxdaily.com/wp-content/uploads/wptouch-data/themes/bauhaus/default/style.css?ver=939b77e6da9a9b591dfc5ce10c4767ac' type='text/css' media='all' />
+<link rel='stylesheet' id='a3a3_lazy_load-css'  href='http://cdn.osxdaily.com/wp-content/uploads/sass/a3_lazy_load.min.css?ver=1571440752' type='text/css' media='all' />
+<link rel='stylesheet' id='sharedaddy-css'  href='http://cdn.osxdaily.com/wp-content/plugins/jetpack/modules/sharedaddy/sharing.css?ver=7.7.1' type='text/css' media='all' />
+<link rel='stylesheet' id='social-logos-css'  href='http://cdn.osxdaily.com/wp-content/plugins/jetpack/_inc/social-logos/social-logos.min.css?ver=1' type='text/css' media='all' />
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-includes/js/jquery/jquery.js?ver=1.12.4-wp'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-includes/js/jquery/jquery-migrate.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var related_posts_js_options = {"post_heading":"h4"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/jetpack/modules/related-posts/related-posts.js?ver=20190204'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var cnArgs = {"ajaxurl":"https:\/\/osxdaily.com\/wp-admin\/admin-ajax.php","hideEffect":"fade","onScroll":"yes","onScrollOffset":"100","cookieName":"cookie_notice_accepted","cookieValue":"true","cookieTime":"31536000","cookiePath":"\/","cookieDomain":"","redirection":"","cache":"1","refuse":"no","revoke_cookies":"0","revoke_cookies_opt":"automatic","secure":"0"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/cookie-notice/js/front.js?ver=1.2.43'></script>
+<script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js?ver=5.2.4'></script>
+<link rel='https://api.w.org/' href='http://osxdaily.com/wp-json/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://osxdaily.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn.osxdaily.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Watch ESPN, HBO GO, Sky News on Apple TV with the 5.3 Update' href='http://osxdaily.com/2013/06/19/apple-tv-5-3-update-ipsw-espn-hbo/' />
+<link rel='next' title='Unlock iPhone in 30 Minutes: Unlocking is Faster than Ever with AT&#038;T' href='http://osxdaily.com/2013/06/20/unlock-iphone-fast-att/' />
+<link rel='shortlink' href='http://osxdaily.com/?p=38951' />
+<link rel="alternate" type="application/json+oembed" href="http://osxdaily.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fosxdaily.com%2F2013%2F06%2F19%2Fcopy-file-folder-path-mac-os-x%2F" />
+<link rel="alternate" type="text/xml+oembed" href="http://osxdaily.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fosxdaily.com%2F2013%2F06%2F19%2Fcopy-file-folder-path-mac-os-x%2F&#038;format=xml" />
+<script type='text/javascript'>
+	(function () {
+		var pl_beacon = document.createElement('script');
+		pl_beacon.type = 'text/javascript';
+		pl_beacon.async = true;
+		var host = 'http://osxdaily.com';
+		if ('https:' == document.location.protocol) {
+			host = host.replace('http://', 'https://');
+		}
+		pl_beacon.src = host + '/un6up8Rl5Bi9.js?ts=' + Math.floor((Math.random() * 100000) + 1);
+		var first_script_tag = document.getElementsByTagName('script')[0];
+		first_script_tag.parentNode.insertBefore(pl_beacon, first_script_tag);
+	})();
+</script><style data-context="foundation-flickity-css">/*! Flickity v2.0.2
+http://flickity.metafizzy.co
+---------------------------------------------- */.flickity-enabled{position:relative}.flickity-enabled:focus{outline:0}.flickity-viewport{overflow:hidden;position:relative;height:100%}.flickity-slider{position:absolute;width:100%;height:100%}.flickity-enabled.is-draggable{-webkit-tap-highlight-color:transparent;tap-highlight-color:transparent;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.flickity-enabled.is-draggable .flickity-viewport{cursor:move;cursor:-webkit-grab;cursor:grab}.flickity-enabled.is-draggable .flickity-viewport.is-pointer-down{cursor:-webkit-grabbing;cursor:grabbing}.flickity-prev-next-button{position:absolute;top:50%;width:44px;height:44px;border:none;border-radius:50%;background:#fff;background:hsla(0,0%,100%,.75);cursor:pointer;-webkit-transform:translateY(-50%);transform:translateY(-50%)}.flickity-prev-next-button:hover{background:#fff}.flickity-prev-next-button:focus{outline:0;box-shadow:0 0 0 5px #09f}.flickity-prev-next-button:active{opacity:.6}.flickity-prev-next-button.previous{left:10px}.flickity-prev-next-button.next{right:10px}.flickity-rtl .flickity-prev-next-button.previous{left:auto;right:10px}.flickity-rtl .flickity-prev-next-button.next{right:auto;left:10px}.flickity-prev-next-button:disabled{opacity:.3;cursor:auto}.flickity-prev-next-button svg{position:absolute;left:20%;top:20%;width:60%;height:60%}.flickity-prev-next-button .arrow{fill:#333}.flickity-page-dots{position:absolute;width:100%;bottom:-25px;padding:0;margin:0;list-style:none;text-align:center;line-height:1}.flickity-rtl .flickity-page-dots{direction:rtl}.flickity-page-dots .dot{display:inline-block;width:10px;height:10px;margin:0 8px;background:#333;border-radius:50%;opacity:.25;cursor:pointer}.flickity-page-dots .dot.is-selected{opacity:1}</style><style data-context="foundation-slideout-css">.slideout-menu{position:fixed;left:0;top:0;bottom:0;right:auto;z-index:0;width:256px;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none}.slideout-menu.pushit-right{left:auto;right:0}.slideout-panel{position:relative;z-index:1;will-change:transform}.slideout-open,.slideout-open .slideout-panel,.slideout-open body{overflow:hidden}.slideout-open .slideout-menu{display:block}.pushit{display:none}</style><style type='text/css'>img#wpstats{display:none}</style><style data-context="foundation-wptouch-icons-css">[class*=" icon-"]:before,[class*=" wptouch-icon-"]:before,[class^=icon-]:before,[class^=wptouch-icon-]:before{font-family:wptouch-icons;font-style:normal;font-weight:400;speak:none;display:inline-block;text-decoration:inherit;width:1em;margin-right:.2em;text-align:center;font-variant:normal;text-transform:none;line-height:1em;margin-left:.2em}.icon-arrow-left:before,.wptouch-icon-arrow-left:before{content:'\e800'}.icon-caret-down:before,.wptouch-icon-caret-down:before{content:'\e801'}.icon-arrow-combo:before,.wptouch-icon-arrow-combo:before{content:'\e802'}.icon-yelp:before,.wptouch-icon-yelp:before{content:'\e803'}.icon-key:before,.wptouch-icon-key:before{content:'\e804'}.icon-left-open-big:before,.wptouch-icon-left-open-big:before{content:'\e805'}.icon-user:before,.wptouch-icon-user:before{content:'\e806'}.icon-signin:before,.wptouch-icon-signin:before{content:'\e807'}.icon-signout:before,.wptouch-icon-signout:before{content:'\e808'}.icon-search:before,.wptouch-icon-search:before{content:'\e809'}.icon-reorder:before,.wptouch-icon-reorder:before{content:'\e80a'}.icon-basket:before,.wptouch-icon-basket:before{content:'\e80b'}.icon-angle-right:before,.wptouch-icon-angle-right:before{content:'\e80c'}.icon-angle-left:before,.wptouch-icon-angle-left:before{content:'\e80d'}.icon-chevron-up:before,.wptouch-icon-chevron-up:before{content:'\e80e'}.icon-chevron-down:before,.wptouch-icon-chevron-down:before{content:'\e80f'}.icon-chevron-left:before,.wptouch-icon-chevron-left:before{content:'\e810'}.icon-chevron-right:before,.wptouch-icon-chevron-right:before{content:'\e811'}.icon-comment:before,.wptouch-icon-comment:before{content:'\e812'}.icon-comments:before,.wptouch-icon-comments:before{content:'\e813'}.icon-circle-arrow-left:before,.wptouch-icon-circle-arrow-left:before{content:'\e814'}.icon-circle-arrow-right:before,.wptouch-icon-circle-arrow-right:before{content:'\e815'}.icon-pencil:before,.wptouch-icon-pencil:before{content:'\e816'}.icon-reply:before,.wptouch-icon-reply:before{content:'\e817'}.icon-envelope-alt:before,.wptouch-icon-envelope-alt:before{content:'\e818'}.icon-list-ul:before,.wptouch-icon-list-ul:before{content:'\e819'}.icon-tags:before,.wptouch-icon-tags:before{content:'\e81a'}.icon-twitter:before,.wptouch-icon-twitter:before{content:'\e81b'}.icon-google-plus:before,.wptouch-icon-google-plus:before{content:'\e81c'}.icon-google-plus-sign:before,.wptouch-icon-google-plus-sign:before{content:'\e81d'}.icon-facebook:before,.wptouch-icon-facebook:before{content:'\e81e'}.icon-facebook-sign:before,.wptouch-icon-facebook-sign:before{content:'\e81f'}.icon-instagram:before,.wptouch-icon-instagram:before{content:'\e820'}.icon-tumblr:before,.wptouch-icon-tumblr:before{content:'\e821'}.icon-pinterest:before,.wptouch-icon-pinterest:before{content:'\e822'}.icon-pinterest-sign:before,.wptouch-icon-pinterest-sign:before{content:'\e823'}.icon-vine:before,.wptouch-icon-vine:before{content:'\e824'}.icon-book-open:before,.wptouch-icon-book-open:before{content:'\e825'}.icon-youtube:before,.wptouch-icon-youtube:before{content:'\e826'}.icon-linkedin-sign:before,.wptouch-icon-linkedin-sign:before{content:'\e827'}.icon-plus:before,.wptouch-icon-plus:before{content:'\e828'}.icon-rss-sign:before,.wptouch-icon-rss-sign:before{content:'\e829'}.icon-time:before,.wptouch-icon-time:before{content:'\e82a'}.icon-camera-retro:before,.wptouch-icon-camera-retro:before{content:'\e82b'}.icon-play:before,.wptouch-icon-play:before{content:'\e82c'}.icon-filter:before,.wptouch-icon-filter:before{content:'\e82d'}.icon-minus:before,.wptouch-icon-minus:before{content:'\e82e'}.icon-ok-sign:before,.wptouch-icon-ok-sign:before{content:'\e82f'}.icon-layout-tiles:before,.wptouch-icon-layout-tiles:before{content:'\e830'}.icon-layout-list:before,.wptouch-icon-layout-list:before{content:'\e831'}.icon-resize-full:before,.wptouch-icon-resize-full:before{content:'\e832'}.icon-cancel:before,.wptouch-icon-cancel:before{content:'\e833'}.icon-cancel-circled:before,.wptouch-icon-cancel-circled:before{content:'\e834'}.icon-star:before,.wptouch-icon-star:before{content:'\e835'}.icon-remove-sign:before,.wptouch-icon-remove-sign:before{content:'\e836'}.icon-map-marker:before,.wptouch-icon-map-marker:before{content:'\e837'}.icon-cloud:before,.wptouch-icon-cloud:before{content:'\e838'}.icon-cloud-download:before,.wptouch-icon-cloud-download:before{content:'\e839'}.icon-info-sign:before,.wptouch-icon-info-sign:before{content:'\e83a'}.icon-copy:before,.wptouch-icon-copy:before{content:'\e83b'}.icon-download:before,.wptouch-icon-download:before{content:'\e83c'}.icon-external-link:before,.wptouch-icon-external-link:before{content:'\e83d'}.icon-warning-sign:before,.wptouch-icon-warning-sign:before{content:'\e83e'}.icon-compass:before,.wptouch-icon-compass:before{content:'\e83f'}.icon-trash:before,.wptouch-icon-trash:before{content:'\e840'}.icon-th:before,.wptouch-icon-th:before{content:'\e841'}.icon-menu:before,.wptouch-icon-menu:before{content:'\e842'}.icon-double-angle-up:before,.wptouch-icon-double-angle-up:before{content:'\e843'}.icon-arrow-down:before,.wptouch-icon-arrow-down:before{content:'\e844'}.icon-caret-right:before,.wptouch-icon-caret-right:before{content:'\e845'}.icon-caret-left:before,.wptouch-icon-caret-left:before{content:'\e846'}.icon-caret-up:before,.wptouch-icon-caret-up:before{content:'\e847'}.icon-vimeo:before,.wptouch-icon-vimeo:before{content:'\e848'}.icon-phone:before,.wptouch-icon-phone:before{content:'\e849'}.icon-angle-up:before,.wptouch-icon-angle-up:before{content:'\e84a'}.icon-angle-down:before,.wptouch-icon-angle-down:before{content:'\e84b'}.icon-refresh:before,.wptouch-icon-refresh:before{content:'\e84c'}.icon-info:before,.wptouch-icon-info:before{content:'\e84d'}.icon-chat:before,.wptouch-icon-chat:before{content:'\e84e'}.icon-check:before,.wptouch-icon-check:before{content:'\e84f'}</style><link rel="canonical" href="http://osxdaily.com/2013/06/19/copy-file-folder-path-mac-os-x/" />
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Quickly Copy a File or Folder Path to the Clipboard in Mac OS X" />
+<meta property="og:url" content="http://osxdaily.com/2013/06/19/copy-file-folder-path-mac-os-x/" />
+<meta property="og:description" content="There are a few ways to retrieve a file or folders full path from Mac OS X, and we&#8217;ll cover the two easiest methods here, and also a third option that utilizes a Service to instantly copy any…" />
+<meta property="article:published_time" content="2013-06-19T19:52:03+00:00" />
+<meta property="article:modified_time" content="2013-06-24T18:10:43+00:00" />
+<meta property="og:site_name" content="OS X Daily" />
+<meta property="og:image" content="http://cdn.osxdaily.com/wp-content/uploads/2013/06/copy-file-path-service-mac.jpg" />
+<meta property="og:image:width" content="620" />
+<meta property="og:image:height" content="302" />
+<meta property="og:image:alt" content="Create a &quot;Copy Path&quot; Service in Mac OS X" />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:site" content="@osxdaily" />
+<meta name="twitter:text:title" content="Quickly Copy a File or Folder Path to the Clipboard in Mac OS X" />
+<meta name="twitter:image" content="http://cdn.osxdaily.com/wp-content/uploads/2013/06/copy-file-path-service-mac.jpg?w=640" />
+<meta name="twitter:image:alt" content="Create a &quot;Copy Path&quot; Service in Mac OS X" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<!-- End Jetpack Open Graph Tags -->
+<link rel="icon" href="http://cdn.osxdaily.com/wp-content/uploads/2019/09/cropped-apple-touch-icon-104-32x32.png" sizes="32x32" />
+<link rel="icon" href="http://cdn.osxdaily.com/wp-content/uploads/2019/09/cropped-apple-touch-icon-104-192x192.png" sizes="192x192" />
+<link rel="apple-touch-icon-precomposed" href="http://cdn.osxdaily.com/wp-content/uploads/2019/09/cropped-apple-touch-icon-104-180x180.png" />
+<meta name="msapplication-TileImage" content="http://cdn.osxdaily.com/wp-content/uploads/2019/09/cropped-apple-touch-icon-104-270x270.png" />
+<style>.ios7.web-app-mode.has-fixed header{ background-color: rgba(255,255,255,.88);}</style><meta name="viewport" content="initial-scale=1.0, maximum-scale=3.0, user-scalable=no, width=device-width" /><link rel="apple-touch-icon-precomposed" href="http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/admin/images/default-bookmark.png" />
+
+<!-- Foundation Styles -->
+<style type='text/css'>
+.wptouch-menu .menu-tree a,.wptouch-menu .menu-tree span{color:rgba(0,0,0,.65);text-shadow:rgba(255,255,255,.3) 0 1px 0}.wptouch-menu .menu-tree>li{border-bottom:1px solid rgba(0,0,0,.08);border-top:1px solid rgba(255,255,255,.1)}.menu-tree li{clear:both;position:relative;line-height:100%}.wptouch-menu ul ul{display:none}.menu-tree li span{-webkit-transition-duration:.3s;-o-transition-duration:.3s;transition-duration:.3s;display:block;-webkit-box-shadow:inset rgba(0,0,0,.15) 1px 0 0;box-shadow:inset rgba(0,0,0,.15) 1px 0 0;border-left:1px solid rgba(255,255,255,.1);padding:15px;float:right}.menu-tree li span.toggle{-webkit-box-shadow:inset rgba(0,0,0,.2) 0 4px 4px;box-shadow:inset rgba(0,0,0,.2) 0 4px 4px;border:none}.menu-tree li span:before{font-family:wptouch-icons;content:"\e80f"}.menu-tree li span.toggle:before{content:"\e80e";font-weight:400;font-style:normal}ul.menu-tree ul span,ul.menu-tree.no-parent-links span{border:none;-webkit-box-shadow:none;box-shadow:none}.menu-tree li a{display:block;-o-text-overflow:ellipsis;-ms-text-overflow:ellipsis;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;padding-top:15px;padding-bottom:15px;padding-right:32px}.menu-tree li img{width:26px;height:26px;position:relative;float:left;padding-right:6px;top:8px;padding-left:6px}.menu-tree>.open-tree{background:rgba(0,0,0,.03);-webkit-box-shadow:inset rgba(0,0,0,.25) 0 0 4px;box-shadow:inset rgba(0,0,0,.25) 0 0 4px;border-top-color:rgba(0,0,0,.2);margin-top:-1px;padding-top:1px}.menu-tree li.no-icon{padding-left:10px}.menu-tree ul li{border-style:none!important;clear:both;padding-left:15px}.rtl .menu-tree li span{-webkit-transition-duration:.3s;-o-transition-duration:.3s;transition-duration:.3s;float:left;-webkit-box-shadow:inset rgba(0,0,0,.15) -1px 0 0;box-shadow:inset rgba(0,0,0,.15) -1px 0 0;border-right:1px solid rgba(255,255,255,.1);border-left:none}.rtl .menu-tree li span.toggle{-webkit-box-shadow:inset rgba(0,0,0,.2) 0 4px 4px;box-shadow:inset rgba(0,0,0,.2) 0 4px 4px;border:none}.rtl .menu-tree li.menu-item img{float:right}.rtl .menu-tree li.menu-item a{padding-left:32px;padding-right:0}.rtl .menu-tree li.no-icon{padding-right:10px}.rtl .menu-tree ul li{padding-left:0;padding-right:15px}.dark-header .wptouch-menu .menu-tree a,.dark-header .wptouch-menu .menu-tree span{color:rgba(255,255,255,.9);text-shadow:rgba(0,0,0,.3) 0 -1px 0}.dark-header .wptouch-menu .menu-tree span:before{color:rgba(255,255,255,.9);text-shadow:rgba(0,0,0,.5) 0 -1px 0}.dark-header .wptouch-menu .menu-tree>li.menu-item{border-bottom:1px solid rgba(0,0,0,.12);border-top:1px solid rgba(255,255,255,.06)}</style>
+<meta name="theme-color" content="#ffffff"><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: 'ca-pub-7321635426958037',
+    enable_page_level_ads: true,
+    overlays: {google_ad_channel: '4432130065'}
+  });
+</script>			</head>
+
+	<body class="post-template-default single single-post postid-38951 single-format-standard light-body light-header light-post-head body-font android ios7 theme-bauhaus circles off-canvas list-view wptouch-multiads cookies-not-set">
+
+		
+		
+			<div class="pushit pushit-left">
+		<div id="menu" class="wptouch-menu show-hide-menu">
+			<ul class="menu-tree parent-links"><li class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent"><img src="http://cdn.osxdaily.com/wp-content/plugins//wptouch-pro//resources/icons/elegant/Config.png" alt="menu-icon" /><a href="http://osxdaily.com/category/tips-tricks/" class="title">Tips & Tricks</a></li><li class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent"><img src="http://cdn.osxdaily.com/wp-content/plugins//wptouch-pro//resources/icons/elegant/Screen.png" alt="menu-icon" /><a href="http://osxdaily.com/category/mac-os-x/" class="title">Mac OS X</a></li><li class="menu-item menu-item-type-taxonomy menu-item-object-category"><img src="http://cdn.osxdaily.com/wp-content/plugins//wptouch-pro//resources/icons/elegant/Photo.png" alt="menu-icon" /><a href="http://osxdaily.com/category/iphone/" class="title">iPhone</a></li><li class="menu-item menu-item-type-taxonomy menu-item-object-category"><img src="http://cdn.osxdaily.com/wp-content/plugins//wptouch-pro//resources/icons/elegant/List.png" alt="menu-icon" /><a href="http://osxdaily.com/category/ipad/" class="title">iPad</a></li><li class="menu-item menu-item-type-taxonomy menu-item-object-category"><img src="http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/resources/icons/elegant/Paper.png" alt="menu-icon" /><a href="http://osxdaily.com/category/news/" class="title">News</a></li><li class="menu-item menu-item-type-taxonomy menu-item-object-category"><img src="http://cdn.osxdaily.com/wp-content/plugins//wptouch-pro//resources/icons/elegant/Screen.png" alt="menu-icon" /><a href="http://osxdaily.com/category/mac-setups/" class="title">Mac Setups</a></li></ul>
+					</div>
+	</div>
+
+<div class="page-wrapper">
+
+	<!-- Back Button for Web-App Mode -->
+	<div class="wptouch-icon-arrow-left back-button tappable"><!-- css-button --></div>
+
+	<header id="header-title-logo">
+					<div id="search-toggle" class="search-toggle tappable search-right" role="button"><!--icon-search--></div>
+				<a href="http://osxdaily.com" class="header-center tappable">
+							<img id="header-logo" src="http://cdn.osxdaily.com/wp-content/uploads/2019/09/osxdaily-logo-a-104.png" alt="logo image" />
+					</a>
+		<div id="menu-toggle" class="menu-btn tappable show-hide-toggle menu-left" data-effect-target="menu" data-menu-target="menu" role="button"><!--icon-reorder--></div>
+	</header>
+
+		<div id="search-dropper">
+		<div id="wptouch-search-inner">
+			<form method="get" id="searchform" action="http://osxdaily.com/">
+				<input type="text" name="s" id="search-text" placeholder="Search this website&hellip;" />
+				<input name="submit" type="submit" id="search-submit" value="Search" class="button-dark" />
+			</form>
+		</div>
+	</div>
+	
+	<div class="content-wrap">
+
+		
+	
+		
+	<div id="content">
+		
+			
+			<div class="post section post-38951 post-name-copy-file-folder-path-mac-os-x post-author-7 single not-page has-thumbnail show-thumbs">
+				<div class="post-page-head-area bauhaus">
+					<span class="post-date-comments">
+													June 19, 2013																			&bull;							60 comments											</span>
+					<h1 class="post-title heading-font">Quickly Copy a File or Folder Path to the Clipboard in Mac OS X</h1>
+											<span class="post-author">Paul Horowitz</span>
+														</div>
+
+				<div class="post-page-content">
+					<div class="wptouch-showcase showcase-location-pre_content"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- ATF Mobile Head -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:320px;height:50px"
+     data-ad-client="ca-pub-7321635426958037"
+     data-ad-slot="2206913673"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script></div><p>There are a few ways to retrieve a file or folders full path from Mac OS X, and we&#8217;ll cover the two easiest methods here, and also a third option that utilizes a Service to instantly copy any path to the clipboard. First, we&#8217;ll use the Get Info panel to pull any items complete path, and then we&#8217;ll use another trick that utilizes an under appreciated feature of the Terminal to retrieve any directory or files path. The optional Automator Service provides yet another option to copy file and folder paths, which is then quickly accessible through the right-click menu from the OS X Finder. </p>
+<p><img src="http://cdn.osxdaily.com/wp-content/uploads/2013/06/path-mac.jpg" alt="File or folder path in Mac OS X " title="path-mac" width="620" height="178" class="aligncenter size-full wp-image-38956" /><br />
+<span id="more-38951"></span><br />
+Just to clarify, we are looking to copy the path to a file or folder to the clipboard so that it can be pasted elsewhere. This is different from showing the path, which can be <a href="http://osxdaily.com/2012/06/20/show-path-bar-in-mac-os-x/">made visible</a> in any Finder window through an optional window bar or even <a href="http://osxdaily.com/2007/12/02/show-full-directory-path-in-finder-window-title-bars/">in the title bar</a> using a defaults trick.</p>
+<!-- Quick Adsense WordPress Plugin: http://quickadsense.com/ -->
+<div style="float: left; margin: 10px 10px 10px 0;">
+<div style="padding:5px 20px 10px 0;" ><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- 336x280 in page article -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:336px;height:280px"
+     data-ad-client="ca-pub-7321635426958037"
+     data-ad-slot="4239339108"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script></div>
+</div>
+
+<p>Let&#8217;s get to copying complete paths so that you can use them elsewhere. </p>
+<h3>Copy a File / Directory Path from the OS X Get Info Window</h3>
+<p>Perhaps the easiest and most user friendly method, you can easily retrieve any file or folders path from the Get Info window by doing the following:</p>
+<ul>
+<li>Select the file or folder in the OS X Finder, then hit Command+i to summon Get Info</li>
+<li>Click and drag alongside &#8220;Where&#8221; to select the path, then hit Command+C to copy the full path to the clipboard</li>
+</ul>
+<p><img src="http://cdn.osxdaily.com/wp-content/uploads/2013/06/copy-path-mac-getinfo.jpg" alt="Copy a path of a file or folder on the Mac through Get Info" title="copy-path-mac-getinfo" width="380" height="385" class="aligncenter size-full wp-image-38955" /></p>
+<p>Get Info can also be accessed by the control-click and right-click menus. For most use cases and for occasional complete path access, the Get Info trick is simple, fast, efficient, and should fit the bill for most people. </p>
+<h3>Print Path through the Mac Terminal</h3>
+<p>Dragging and dropping anything into the OS X Terminal  <a href="http://osxdaily.com/2011/03/02/drag-drop-finder-items-into-the-terminal-for-their-full-path/">outputs the full path</a> to that item. </p>
+<ul>
+<li>Launch Terminal then drag and drop any item from the Finder into the Terminal window to instantly print the full path</li>
+<li>Select and highlight the path to copy it to the clipboard as usual</li>
+</ul>
+<p><img src="http://cdn.osxdaily.com/wp-content/uploads/2013/06/print-path-mac-terminal.jpg" alt="Print and copy a files path in the Mac Terminal" title="print-path-mac-terminal" width="620" height="139" class="aligncenter size-full wp-image-38954" /></p>
+<p>This trick is great if you are looking to use the path in the Terminal, otherwise it may not be as easy as the Get Info tip because it requires opening another app.</p>
+<!-- Quick Adsense WordPress Plugin: http://quickadsense.com/ -->
+<div style="float: none; margin:10px 0 10px 0; text-align:center;">
+<!--- gads -->
+<div style="padding:5px 20px 10px 0;" id="lower_content_ad_box">
+
+<script type="text/javascript"><!--
+google_ad_client = "pub-7321635426958037";
+/* 336x280, created 8/6/09 */
+google_ad_slot = "3803516584";
+google_ad_width = 336;
+google_ad_height = 280;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+</div>
+
+<h3>Create a &#8220;Copy Path&#8221; Service for the Right-Click Menu</h3>
+<p>If you find yourself frequently needing to copy and paste file and folder paths, creating an Automator Service will make your life easier because the service then becomes accessible from the OS X Right-Click contextual menu, accessible from anywhere in the Finder. This is an excellent trick from <a href="http://reviews.cnet.com/8301-13727_7-57578129-263/how-to-copy-a-file-path-in-os-x/" target="_blank">CNet</a> and is very easy to set up yourself:</p>
+<ul>
+<li>Launch Automator and create a new &#8220;Service&#8221;</li>
+<li>Use the search function to look for &#8220;Copy to Clipboard&#8221; and drag that into the rightside panel of the Service</li>
+<li>Set &#8216;Service recieves selected&#8217; to &#8220;files or folders&#8221; and &#8216;in&#8217; to &#8220;Finder&#8221; as shown in the screen shot below</li>
+<li>Save the Service with a name like &#8220;Copy Path&#8221;</li>
+</ul>
+<p><img src="http://cdn.osxdaily.com/wp-content/uploads/2013/06/copy-file-path-service-mac.jpg" alt="Create a &quot;Copy Path&quot; Service in Mac OS X" title="copy-file-path-service-mac" width="620" height="302" class="aligncenter size-full wp-image-38952" /></p>
+<p>Now go anywhere in the Finder, select anything in the filesystem be it a directory or a file, then right-click to reveal the &#8220;Copy Path&#8221; service item as created. </p>
+<p><img src="http://cdn.osxdaily.com/wp-content/uploads/2013/06/copy-file-folder-path-service-mac-os-x.jpg" alt="Copy a File or Folder Path through a Service in Mac OS X" title="copy-file-folder-path-service-mac-os-x" width="618" height="543" class="aligncenter size-full wp-image-38953" /></p>
+<p>Choosing that option will instantly copy the chosen items path to the clipboard, which you can then paste elsewhere.</p>
+<h4>What is a path anyway?</h4>
+<p>For the unfamiliar, you can think of an items path as it&#8217;s address in the file system, pointing to exactly where it resides on the computer. For example, a file named &#8220;Testfile.txt&#8221; that resides on your user account desktop would have a complete path that would resemble something like this:</p>
+<p><code>/Users/USERNAME/Desktop/Testfile.txt</code></p>
+<p>For items in the user directories, you can user a tilde to shorthand the path like so:</p>
+<p><code>~/Desktop/Testfile.txt</code></p>
+<p>That shorthand does not work with system files, or for accessing other user files, thus a complete path would be needed. All of the methods we&#8217;re sharing will access and copy the complete path, not the short hand, even if the file or directory in question is in the user folders.</p>
+
+<div style="font-size: 0px; height: 0px; line-height: 0px; margin: 0; padding: 0; clear: both;"></div><div class="sharedaddy sd-sharing-enabled"><div class="robots-nocontent sd-block sd-social sd-social-icon-text sd-sharing"><div class="sd-content"><ul><li class="share-facebook"><a rel="nofollow noopener noreferrer" data-shared="sharing-facebook-38951" class="share-facebook sd-button share-icon" href="http://osxdaily.com/2013/06/19/copy-file-folder-path-mac-os-x/?share=facebook" target="_blank" title="Click to share on Facebook"><span>Facebook</span></a></li><li class="share-twitter"><a rel="nofollow noopener noreferrer" data-shared="sharing-twitter-38951" class="share-twitter sd-button share-icon" href="http://osxdaily.com/2013/06/19/copy-file-folder-path-mac-os-x/?share=twitter" target="_blank" title="Click to share on Twitter"><span>Twitter</span></a></li><li><a href="#" class="sharing-anchor sd-button share-more"><span>More</span></a></li><li class="share-end"></li></ul><div class="sharing-hidden"><div class="inner" style="display: none;"><ul><li class="share-linkedin"><a rel="nofollow noopener noreferrer" data-shared="sharing-linkedin-38951" class="share-linkedin sd-button share-icon" href="http://osxdaily.com/2013/06/19/copy-file-folder-path-mac-os-x/?share=linkedin" target="_blank" title="Click to share on LinkedIn"><span>LinkedIn</span></a></li><li class="share-print"><a rel="nofollow noopener noreferrer" data-shared="" class="share-print sd-button share-icon" href="http://osxdaily.com/2013/06/19/copy-file-folder-path-mac-os-x/#print" target="_blank" title="Click to print"><span>Print</span></a></li><li class="share-end"></li><li class="share-tumblr"><a rel="nofollow noopener noreferrer" data-shared="" class="share-tumblr sd-button share-icon" href="http://osxdaily.com/2013/06/19/copy-file-folder-path-mac-os-x/?share=tumblr" target="_blank" title="Click to share on Tumblr"><span>Tumblr</span></a></li><li class="share-pinterest"><a rel="nofollow noopener noreferrer" data-shared="sharing-pinterest-38951" class="share-pinterest sd-button share-icon" href="http://osxdaily.com/2013/06/19/copy-file-folder-path-mac-os-x/?share=pinterest" target="_blank" title="Click to share on Pinterest"><span>Pinterest</span></a></li><li class="share-end"></li><li class="share-pocket"><a rel="nofollow noopener noreferrer" data-shared="" class="share-pocket sd-button share-icon" href="http://osxdaily.com/2013/06/19/copy-file-folder-path-mac-os-x/?share=pocket" target="_blank" title="Click to share on Pocket"><span>Pocket</span></a></li><li class="share-reddit"><a rel="nofollow noopener noreferrer" data-shared="" class="share-reddit sd-button share-icon" href="http://osxdaily.com/2013/06/19/copy-file-folder-path-mac-os-x/?share=reddit" target="_blank" title="Click to share on Reddit"><span>Reddit</span></a></li><li class="share-end"></li><li class="share-telegram"><a rel="nofollow noopener noreferrer" data-shared="" class="share-telegram sd-button share-icon" href="http://osxdaily.com/2013/06/19/copy-file-folder-path-mac-os-x/?share=telegram" target="_blank" title="Click to share on Telegram"><span>Telegram</span></a></li><li class="share-jetpack-whatsapp"><a rel="nofollow noopener noreferrer" data-shared="" class="share-jetpack-whatsapp sd-button share-icon" href="http://osxdaily.com/2013/06/19/copy-file-folder-path-mac-os-x/?share=jetpack-whatsapp" target="_blank" title="Click to share on WhatsApp"><span>WhatsApp</span></a></li><li class="share-end"></li><li class="share-skype"><a rel="nofollow noopener noreferrer" data-shared="sharing-skype-38951" class="share-skype sd-button share-icon" href="http://osxdaily.com/2013/06/19/copy-file-folder-path-mac-os-x/?share=skype" target="_blank" title="Click to share on Skype"><span>Skype</span></a></li><li class="share-end"></li></ul></div></div></div></div></div>
+<div id='jp-relatedposts' class='jp-relatedposts' >
+	<h3 class="jp-relatedposts-headline"><em>Related</em></h3>
+</div><div class="sharing-options share-bottom style-default">
+	<a class="facebook-btn no-ajax" href="//www.facebook.com/sharer.php?u=http%3A%2F%2Fosxdaily.com%2F2013%2F06%2F19%2Fcopy-file-folder-path-mac-os-x%2F" target="_blank">Share</a>
+	<a class="twitter-btn no-ajax" href="//twitter.com/intent/tweet?source=wptouchpro3&text=Quickly+Copy+a+File+or+Folder+Path+to+the+Clipboard+in+Mac+OS+X+-+&url=http%3A%2F%2Fosxdaily.com%2F2013%2F06%2F19%2Fcopy-file-folder-path-mac-os-x%2F" target="_blank">Tweet</a>
+	<a class="pinterest-btn no-ajax" href="//pinterest.com/pin/create/button/?url=http%3A%2F%2Fosxdaily.com%2F2013%2F06%2F19%2Fcopy-file-folder-path-mac-os-x%2F&media=http://cdn.osxdaily.com/wp-content/uploads/2013/06/copy-file-path-service-mac.jpg" target="_blank">Pin</a>
+	<a class="email-btn no-ajax" href="mailto:?subject=Quickly%20Copy%20a%20File%20or%20Folder%20Path%20to%20the%20Clipboard%20in%20Mac%20OS%20X&body=http%3A%2F%2Fosxdaily.com%2F2013%2F06%2F19%2Fcopy-file-folder-path-mac-os-x%2F">Mail</a>
+	<a class="sms-btn no-ajax" href="sms:&body=Quickly Copy a File or Folder Path to the Clipboard in Mac OS X: http%3A%2F%2Fosxdaily.com%2F2013%2F06%2F19%2Fcopy-file-folder-path-mac-os-x%2F"><span>SMS</span></a>
+</div>									</div>
+			</div>
+
+			</div> <!-- content -->
+
+				<div class="related-posts">
+			<h3>Related</h3>
+			<ul class="related">
+													<li class="has-thumb no-excerpt">
+													<img width="144" height="144" src="http://cdn.osxdaily.com/wp-content/uploads/2019/10/fix-copy-of-macos-cant-be-used-install-macos-144x144.jpg" class="attachment-wptouch-new-thumbnail size-wptouch-new-thumbnail wp-post-image" alt="Fix copy of Install MacOS damaged and cant be used to install macOS" srcset="http://cdn.osxdaily.com/wp-content/uploads/2019/10/fix-copy-of-macos-cant-be-used-install-macos-144x144.jpg 144w, http://cdn.osxdaily.com/wp-content/uploads/2019/10/fix-copy-of-macos-cant-be-used-install-macos-150x150.jpg 150w, http://cdn.osxdaily.com/wp-content/uploads/2019/10/fix-copy-of-macos-cant-be-used-install-macos-300x300.jpg 300w" sizes="(max-width: 144px) 100vw, 144px" />												<strong>
+							<a href="http://osxdaily.com/2019/10/24/fix-install-macos-application-damaged-cant-be-used-error-mac/">How to Fix &#8220;application is damaged, can&#8217;t be used to install macOS&#8221; Errors</a>
+						</strong>
+						<p></p>
+					</li>
+									<li class="has-thumb no-excerpt">
+													<img width="144" height="144" src="http://cdn.osxdaily.com/wp-content/uploads/2019/10/install-macos-catalina-unsupported-macs-dosdude-patcher-tool-144x144.jpg" class="attachment-wptouch-new-thumbnail size-wptouch-new-thumbnail wp-post-image" alt="How to install MacOS Catalina on unsupported Macs with DosDude tool" srcset="http://cdn.osxdaily.com/wp-content/uploads/2019/10/install-macos-catalina-unsupported-macs-dosdude-patcher-tool-144x144.jpg 144w, http://cdn.osxdaily.com/wp-content/uploads/2019/10/install-macos-catalina-unsupported-macs-dosdude-patcher-tool-150x150.jpg 150w, http://cdn.osxdaily.com/wp-content/uploads/2019/10/install-macos-catalina-unsupported-macs-dosdude-patcher-tool-300x300.jpg 300w" sizes="(max-width: 144px) 100vw, 144px" />												<strong>
+							<a href="http://osxdaily.com/2019/11/08/howto-install-macos-catalina-unsupported-mac-dosdude/">How to Install MacOS Catalina on Unsupported Macs</a>
+						</strong>
+						<p></p>
+					</li>
+									<li class="has-thumb no-excerpt">
+													<img width="144" height="144" src="http://cdn.osxdaily.com/wp-content/uploads/2019/10/airpods-pro-connect-screenshot.jpeg-144x144.png" class="attachment-wptouch-new-thumbnail size-wptouch-new-thumbnail wp-post-image" alt="AirPods Pro connection screen" srcset="http://cdn.osxdaily.com/wp-content/uploads/2019/10/airpods-pro-connect-screenshot.jpeg-144x144.png 144w, http://cdn.osxdaily.com/wp-content/uploads/2019/10/airpods-pro-connect-screenshot.jpeg-150x150.png 150w, http://cdn.osxdaily.com/wp-content/uploads/2019/10/airpods-pro-connect-screenshot.jpeg-300x300.png 300w" sizes="(max-width: 144px) 100vw, 144px" />												<strong>
+							<a href="http://osxdaily.com/2019/11/03/how-pair-airpods-pro-with-iphone-ipad/">How to Pair AirPods Pro with iPhone or iPad</a>
+						</strong>
+						<p></p>
+					</li>
+							</ul>
+		</div>
+	
+		<div class="nav-controls clearfix">
+		
+					<div class="previous">
+				previous post				<a class="prev-post" href="http://osxdaily.com/2013/06/19/apple-tv-5-3-update-ipsw-espn-hbo/">Watch ESPN, HBO GO, Sky News on Apple TV with the 5.3 Update </a>			</div>
+					
+					<div class="next">
+			next post			<a class="next-post" href="http://osxdaily.com/2013/06/20/unlock-iphone-fast-att/">Unlock iPhone in 30 Minutes: Unlocking is Faster than Ever with AT&T</a>			</div>
+			</div>
+			<div id="comments">
+			
+
+
+	<h3 id="responses" class="heading-font">
+		60 responses	</h3>
+
+	<ol class="commentlist">
+		<li class="comment clearfix" id="comment-6805673">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Jeremy</div>
+			<div class="comment-time">March 1, 2019</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Per the section above &#8220;What is a path anyway?&#8221;</p>
+<p>Is there a quick way to &#8220;copy as pathname&#8221; to remove the user account and instead capture the tilda (~), without manually removing and typing?</p>
+<p>~/Desktop/Testfile.txt</p>
+<p>instead of</p>
+<p>/user/username/Desktop/Testfile.txt</p>
+<p>I&#8217;m currently working with a large team of people who have had to migrate our main servers to MS Sharepoint/OneDrive and sharing files is not intuitive. Using the MS links takes you to a web browser instead of a Finder path. When copy as pathname is used, the username is captured. When shared with others, the end user has to recognize this otherwise it will not work on their user account.</p>
+<p>I understand this is not a very complicated thing to fix but hoping to find a better solution so less savvy people can quickly copy and paste paths to share with others without having to manually edit pathnames.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=6805673#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-6688911">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">RoBro</div>
+			<div class="comment-time">January 16, 2019</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Brillllllliant!! Thank you to the author and CNET</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=6688911#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-6356513">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Gokul</div>
+			<div class="comment-time">October 4, 2018</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>2018 and still works! thanks a lot!</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=6356513#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-6247267">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Mike Sevik</div>
+			<div class="comment-time">August 19, 2018</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Thank you so much&#8230; 8/19/2018 still works&#8230;<br />
+You made my life a little easier!</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=6247267#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-5875333">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Maxwell</div>
+			<div class="comment-time">March 13, 2018</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>OSX 10.11+ users can use:<br />
+Option (⌥) &#8211; Command (⌘) &#8211; C</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=5875333#respond">Reply</a></p>
+			</div><ul class="children">
+<li class="comment clearfix" id="comment-7462363">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Brian</div>
+			<div class="comment-time">July 27, 2019</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Glad I looked in the comments; *this* is what I&#8217;ll be using. Thank you, Maxwell!</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=7462363#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-7641905">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Fuad</div>
+			<div class="comment-time">September 18, 2019</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Dude! that&#8217;s exactly what I was looking for! thanks a ton!!!</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=7641905#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-7758299">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Satya</div>
+			<div class="comment-time">October 23, 2019</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>excellent tip mate. thanks heaps</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=7758299#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-5321607">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Colette</div>
+			<div class="comment-time">January 5, 2018</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Thank you! That was a great post, easy to follow, and is making my life a WHOLE lot easier. :)</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=5321607#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-4039962">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Christopher</div>
+			<div class="comment-time">July 24, 2017</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>At least in the latest versions of macOS you can easily copy a files path my right clicking on it and then hold down Alt/Option and then choose Copy &#8220;&#8230;&#8221; as Pathname instead of the usual Copy.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=4039962#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-3648252">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Linda</div>
+			<div class="comment-time">May 24, 2017</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>The easiest way is to drag and drop the file onto a new TextEdit file&#8230;.the file path is then shown.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=3648252#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-3595191">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">ikomrad</div>
+			<div class="comment-time">May 12, 2017</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>The copy path service almost works as advertised, but I have to go down to the &#8220;Services&#8221; menu option and select &#8220;copy path &#8221; from there. Is there a way to place it on the top level context menu the way it is in the screenshot?</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=3595191#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-3522865">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Christopher Rodriguez</div>
+			<div class="comment-time">April 20, 2017</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Even easier (on Sierra, at least):</p>
+<p>1. Secondary click/right click on a file or folder<br />
+2. Hold alt/option key while the context menu is available &#8211; this will change the &#8220;Copy {X}&#8221; option in the context menu to &#8220;Copy {X} as path&#8221;<br />
+3. Paste that path to your heart&#8217;s content.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=3522865#respond">Reply</a></p>
+			</div><ul class="children">
+<li class="comment clearfix" id="comment-6768145">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Anne</div>
+			<div class="comment-time">February 16, 2019</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Genius, thank you!!! This is the kind of easy solution I was looking for :)</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=6768145#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-3224626">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Kevin Zeidler</div>
+			<div class="comment-time">January 20, 2017</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Dude. Thank you. Somehow I never made the deduction that  &#8220;copy to clipboard&#8221; in Automator might actually copy the path itself. It&#8217;s exactly what I wanted (woohoo!) but definitely not what you would expect.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=3224626#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-3209076">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Erin Koss</div>
+			<div class="comment-time">January 14, 2017</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Thank you for the Copy Path tip!  So helpful.  I had never used Mac Services before and my world was just expanded.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=3209076#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-2819238">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Mario</div>
+			<div class="comment-time">October 14, 2016</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>This is fine for local files, but it&#8217;s really not that useful unless you&#8217;re producing a &#8220;How To&#8221; guide or something. I&#8217;m trying to figure out how to copy the &#8220;Server&#8221; file path for a document on a network share. That&#8217;s a far more useful implementation in an office environment.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=2819238#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-2748960">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Chaim Kram</div>
+			<div class="comment-time">September 29, 2016</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Super-useful tips. Thank you!</p>
+<p>I discovered btw that in my Get Info dialog box, the path appears in the old Mac style ( Macintosh HD ▸ Users ▸ &#8230;. ) but if you select any portion of it and paste it into a text area of any kind, you get the Unix path. Very handy.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=2748960#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-2338305">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Jay</div>
+			<div class="comment-time">June 1, 2016</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Just use Copy works as well. (cmc-c, while the files are selected in the finder)</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=2338305#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-2310375">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">MIke</div>
+			<div class="comment-time">May 21, 2016</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Command-option-c will copy the path name without creating a service.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=2310375#respond">Reply</a></p>
+			</div><ul class="children">
+<li class="comment clearfix" id="comment-2748961">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Chaim Kram</div>
+			<div class="comment-time">September 29, 2016</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Great shortcut!</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=2748961#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-3273589">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">ltgseb</div>
+			<div class="comment-time">February 8, 2017</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>BEST SOLUTION IMO :)</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=3273589#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-1710445">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">John Xiao</div>
+			<div class="comment-time">December 7, 2015</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Finally I found Mac&#8217;s &#8216;copy xx&#8217; menu item with shortcut of `cmd+c` of finder is already have the feature of copy path: just try paste directly in terminal.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=1710445#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-1621541">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">hachepunto</div>
+			<div class="comment-time">October 26, 2015</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>I do not know from which version is, but if you press cmd + alt + c in a file or a folder, copy the document path to the clipboard without anything else.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=1621541#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-997500">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Barry Drake</div>
+			<div class="comment-time">March 17, 2015</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Awesome! Thanks.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=997500#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-753708">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Robert Strange</div>
+			<div class="comment-time">January 4, 2015</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Has anyone come up with a workaround for this? Ive just bought a Macbook pro, my previous laptop was windows PC which allowed me to copy and paste links to folders into evernote. I need to do this with Finder / dropbox folders.</p>
+<p>Thanks,<br />
+Rob</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=753708#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-750658">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Matthew Beaty</div>
+			<div class="comment-time">December 26, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Sadly, Mac has updated the path that&#8217;s listed in the info on a file or folder. </p>
+<p>It now includes useless arrows, instead of the actual path. Annoying regression I believe they call an &#8216;improvement&#8217;.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=750658#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-745150">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">David</div>
+			<div class="comment-time">December 16, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>In order for it to be a &#8220;link&#8221; that when clicked on it will jump to that file, it needs the following:  file:///volume/smith/ . . . etc.  How can we get that &#8220;file://&#8221; to start the path name?  Also, if there is a space in the file name, then we need the %20 in between the words.  How does that get added?<br />
+Thanks, David</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=745150#respond">Reply</a></p>
+			</div><ul class="children">
+<li class="comment clearfix" id="comment-745834">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">PReinie</div>
+			<div class="comment-time">December 17, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>David (comment from 20141216) you might try making another automator workflow that pastes the file:///volume/smith text and then calls the copy file folder path workflow or just calls something that pastes whatever is on the clipboard (wherever you used this workflow to copy there). I haven&#8217;t tried it.</p>
+<p>As far as adding the space characters instead of %20s, wherever you want to paste put down two &#8220;&#8221; and arrow once left so you&#8217;re between the double-quotes and then paste the copied path. &#8220;/Users/Shared/Library/Services/Copy File Name&amp;Path to Clipboard.workflow&#8221; Hey, that worked. I&#8217;m not sure how well the ampersand between Name and Path will make it to this posting.</p>
+<p>Windoze, at least in W7 and maybe XP (I just don&#8217;t recall) has shift-right-click a file and Copy as Path is right there and automatically puts the double quotes around the full path. No coding needed.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=745834#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-1066448">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Matt Holland</div>
+			<div class="comment-time">March 31, 2015</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>It just requires adding one additional step to the Automator workflow described above. Make the first item in the workflow be &#8220;Run Applescript&#8221;, and in the box where you edit the Applescript to run, put:</p>
+<p>on run {filepath}</p>
+<p>	set PosixPath to POSIX path of filepath as text<br />
+	set theOutput to &#8220;file://&#8221; &amp; PosixPath</p>
+<p>	return theOutput<br />
+end run</p>
+<p>Then connect the output of that section to the same &#8220;Copy to Clipboard&#8221; action you were using before, and you&#8217;re done.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=1066448#respond">Reply</a></p>
+			</div><ul class="children">
+<li class="comment clearfix" id="comment-1712093">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Michelle C.</div>
+			<div class="comment-time">December 8, 2015</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Hey Matt &#8211; When you say &#8220;connect the output of that section to the same &#8220;copy to clipboard&#8221; action you were using before&#8230;how exactly do I do that?</p>
+<p>Thanks!</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=1712093#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-1712163">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Michelle C.</div>
+			<div class="comment-time">December 8, 2015</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Nevermind! I got it. Couldn&#8217;t copy and paste and to type everything out.</p>
+<p>I do still get the issue of the path having spacing in it verses the %20s.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=1712163#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-3722642">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">MarkusS</div>
+			<div class="comment-time">June 14, 2017</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Thank you for telling us how to add the “file://” before the file path! It still works in OS X 10.11.6 ElCapitan.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=3722642#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-737011">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">cud</div>
+			<div class="comment-time">December 3, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Huzzah!  The Mac has finally become more cumbersome and flaky than Windows!  Looking at the title to this post (QUICKLY copying a file path), I throw back my head and laugh.  </p>
+<p>My work has forced me to take up a Mac again.  One should greet this with pleasure.  It has been nothing but a royal pain.  This is a prime example&#8230;  Why are paths obfuscated?</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=737011#respond">Reply</a></p>
+			</div><ul class="children">
+<li class="comment clearfix" id="comment-918041">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Jimbo</div>
+			<div class="comment-time">February 19, 2015</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>It&#8217;s in GET INFO, for OS X 10.9 &#8211; 10.10 </p>
+<p>[ ⌘command+i ] or right-clic and select [ Get Info ]</p>
+<p>In the [ General ] box it displays the path in an easier way to read, with [ ▸ ] arrows between directories.</p>
+<p>In the [ More Info: ] box just underneath clic the [ ▸ ] and the box will expand showing the full real path.</p>
+<p>Select/Copy/Use!</p>
+<p>Jimbo</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=918041#respond">Reply</a></p>
+			</div><ul class="children">
+<li class="comment clearfix" id="comment-996807">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">CB</div>
+			<div class="comment-time">March 17, 2015</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>There&#8217;s nothing in the &#8220;More Info&#8221; are for me.  Just:</p>
+<p>&#8212;</p>
+<p>CB</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=996807#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-734832">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Neha</div>
+			<div class="comment-time">November 25, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Thanks a lot for providing a Service Context Menu option because Copying Path from Get Info do not work anymore for Mac OS X 10.10 Yosemite.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=734832#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-711513">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Wesam Alalem</div>
+			<div class="comment-time">October 22, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>I always used the Get Info window to get folder/file path. After MAC OS X 10.10 the path components separated by arrows and no longer possible to copy the full path, also it was showing only the parent path.<br />
+I like the Service option easy to access and copies the full path.<br />
+Thank you.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=711513#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-697234">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Faizan Noor</div>
+			<div class="comment-time">August 26, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Awesome guide to enable Copy Path service. Thank you Sir. Highly appreciated!</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=697234#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-684778">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Etienne</div>
+			<div class="comment-time">July 7, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Any ideas why ? Just let me know if any of you guys come across this.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=684778#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-684777">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Etienne</div>
+			<div class="comment-time">July 7, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>In my case, I added a keyboard shortcut, it works for files but not folders, I can only copy folder if I right click them.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=684777#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-672564">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Guy</div>
+			<div class="comment-time">May 19, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Brilliant! Worked right away. Pity Apple doesn&#8217;t make the interface for Automator more informative; it must be useful for making all sorts of procedures more efficient.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=672564#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-671582">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Ronald</div>
+			<div class="comment-time">May 14, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>It nearly works as expected, but after copying, the file path ends up in the clipboard with colons as path separator, instead of slashes. AFIK, colon path separator had been in use in the old Mac operating systems, before they &#8220;went BSD&#8221;.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=671582#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-671237">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Ian</div>
+			<div class="comment-time">May 12, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>A useful tip to create the automator and the process was simple.  However when I paste the link into an email it does not work at all:</p>
+<p>Link is: /Volumes/Scans-4/SCANNED/Documentname.pdf</p>
+<p>Cant work out why! Very frustrating</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=671237#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-655499">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Gojira</div>
+			<div class="comment-time">April 21, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>I foloowed the instructions of &#8220;Create a “Copy Path” Service for the Right-Click Menu&#8221; and it works. Thank you, thank you, thank you!!!</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=655499#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-648737">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Jason</div>
+			<div class="comment-time">April 14, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>If you have Office for Mac (2011), all you have to do is copy (command C) a file in finder and you can paste a clickable link into Microsoft software. Why it&#8217;s MS software only, I don&#8217;t get but it works beautifully.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=648737#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-645502">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Hedo</div>
+			<div class="comment-time">April 10, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Works perfectly, thanks a lot !<br />
+Thanks also to Jeff for the &#8220;Service&gt;&#8230;&#8221; tip, solve it as described</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=645502#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-634064">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Chris</div>
+			<div class="comment-time">March 25, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Automator way is exactly what I needed! Thanks! and to answer Bob, it&#8217;s in right menu under &#8220;services&#8221; for me.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=634064#respond">Reply</a></p>
+			</div><ul class="children">
+<li class="comment clearfix" id="comment-635929">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Jeff</div>
+			<div class="comment-time">March 27, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>I see mine under &#8220;Services&#8221; as well. I&#8217;m on Mavericks 10.9.2. Is there anyway way to move it up a level? So &#8220;Copy Path&#8221; is right there in the rightclick context menu instead of nested under Services?</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=635929#respond">Reply</a></p>
+			</div><ul class="children">
+<li class="comment clearfix" id="comment-635934">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Jeff</div>
+			<div class="comment-time">March 27, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Actually, I solved this myself! If you have more than 5 services, it will nest under the Services subfolder. Go to your system preferences &#8211; Keyboard &#8211; Keyboard Shortcuts. Click Services on the left, then unchceck anything you don&#8217;t use from that Services menu. If you get it under 5 items, they will appear without the context menu.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=635934#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-736716">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Mark</div>
+			<div class="comment-time">December 2, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>You can also add a keyboard-shortcut there, too. Works in Yosemite, too.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=736716#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-625976">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">cory</div>
+			<div class="comment-time">March 11, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>LOVE the automator options for this. thanks so much!</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=625976#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-607429">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">getri</div>
+			<div class="comment-time">January 29, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Even easier: Go to the keyboard preference, check the box next to &#8220;copy path&#8221;, click on the right to add your shortcut… Voila!</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=607429#respond">Reply</a></p>
+			</div><ul class="children">
+<li class="comment clearfix" id="comment-3595127">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">ikomrad</div>
+			<div class="comment-time">May 12, 2017</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>I don&#8217;t see copy path anywhere in keyboard preferences, can you be more specific as to where it is? under keyboard I have keyboard, text, shortcuts, and other tabs. I searched all of them for copy path and did not see it. thanks!</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=3595127#respond">Reply</a></p>
+			</div><ul class="children">
+<li class="comment clearfix" id="comment-3933984">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">soso</div>
+			<div class="comment-time">July 11, 2017</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>You create the Automator Service, save it, then you can find it in the system preferences under Keyboard&gt;Schortcuts&gt;Services and give it a keyboard shortcut.</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=3933984#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-599254">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">johnres</div>
+			<div class="comment-time">January 9, 2014</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Well, you can use Long Path Tool as well, it works for such problems..</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=599254#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-584003">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Bloodklot</div>
+			<div class="comment-time">December 11, 2013</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>Is there a way to make that automation a widget on the top of the finder window so all we have to do is click the button instead of right clicking on the file?</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=584003#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+<li class="comment clearfix" id="comment-568865">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">bob</div>
+			<div class="comment-time">November 17, 2013</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>&#8220;Save the Service with a name like &#8216;Copy Path'&#8221;</p>
+<p>Where is the save button? How is this done?</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=568865#respond">Reply</a></p>
+			</div><ul class="children">
+<li class="comment clearfix" id="comment-584398">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">Sanket</div>
+			<div class="comment-time">December 12, 2013</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>File &gt; Save</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=584398#respond">Reply</a></p>
+			</div><ul class="children">
+<li class="comment clearfix" id="comment-592507">
+	<div class="comment-top">
+		<div class="comment-avatar">
+					</div>
+		<div class="meta">
+			<div class="comment-author">CJ</div>
+			<div class="comment-time">December 26, 2013</div>
+		</div>
+	</div>
+
+	<div class="comment-body">
+				<p>It&#8217;s on the menu for Automator.  File &gt; Save</p>
+					<p><a href="/2013/06/19/copy-file-folder-path-mac-os-x/?replytocom=592507#respond">Reply</a></p>
+			</div></li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+
+															</ol>
+
+
+<!--  End of dealing with the comments, now the comment form -->
+
+
+	<div id="respond">
+
+			<div id="respond" class="comment-respond">
+		<h2 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/2013/06/19/copy-file-folder-path-mac-os-x/#respond" style="display:none;">Cancel reply</a></small></h2>			<form action="http://osxdaily.com/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+				<p class="comment-notes"><span id="email-notes">Your email address will not be published.</span> Required fields are marked <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">Comment</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" required="required"></textarea></p><p class="comment-form-author"><label for="author">Name <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" required='required' /></p>
+<p class="comment-form-email"><label for="email">Email <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" required='required' /></p>
+<p class="comment-form-url"><label for="url">Website</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="Post Comment" /> <input type='hidden' name='comment_post_ID' value='38951' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="d8095b46f9" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="224"/></p>			</form>
+			</div><!-- #respond -->
+			
+	</div><!-- #respond // end dealing with the comment form -->
+
+		</div>
+	
+		
+		
+<!-- Add custom html / content here to be placed above the switch link -->		
+		<div class="footer">
+			<p>All content Copyright OSXDaily.com</p>		<ul class="social-links-wrap">
+		<li><a href="https://twitter.com/osxdaily" class="social-footer-badges no-ajax wptouch-icon-twitter" role="button" title="Twitter" target="_blank"></a></li><li><a href="https://www.facebook.com/osxdaily" class="social-footer-badges no-ajax wptouch-icon-facebook-sign" role="button" title="Facebook" target="_blank"></a></li><li><a href="mailto:osxdailycom@gmail.com" class="social-footer-badges no-ajax wptouch-icon-envelope-alt" role="button" title="Mail" target="_blank"></a></li><li><a href="http://osxdaily.com/rss/" class="social-footer-badges no-ajax wptouch-icon-rss-sign" role="button" title="RSS" target="_blank"></a></li>		</ul>
+		
+					<script>
+						!function(W,P,t,o,u,c,h){W.GoogleAnalyticsObject=t;W[t]||(W[t]=function(){
+						(W[t].q=W[t].q||[]).push(arguments)});W[t].l=+new Date;c=P.createElement(o);
+						h=P.getElementsByTagName(o)[0];c.src=u;h.parentNode.insertBefore(c,h)}
+						(window,document,'ga','script','//www.google-analytics.com/analytics.js');
+						ga('create','UA-428992-6', 'auto');
+						ga('send', 'pageview');
+					</script>
+	<script type="text/javascript">
+		window.WPCOM_sharing_counts = {"http:\/\/osxdaily.com\/2013\/06\/19\/copy-file-folder-path-mac-os-x\/":38951};
+	</script>
+						<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/uploads/wptouch-data/themes/bauhaus/default/bauhaus.min.js?ver=2.2.5'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/themes/foundation/modules/spinjs/spin.min.js?ver=07078a97d66756f213dbca3e379bf084'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/themes/foundation/modules/spinjs/spin-jquery.min.js?ver=07078a97d66756f213dbca3e379bf084'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/themes/foundation/modules/menu/menu.min.js?ver=07078a97d66756f213dbca3e379bf084'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var wptouchFdn = {"ajaxLoading":"Loading\u2026","isRTL":"0"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/themes/foundation/modules/base/base.min.js?ver=07078a97d66756f213dbca3e379bf084'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/themes/foundation/modules/base/base-public.min.js?ver=07078a97d66756f213dbca3e379bf084'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/themes/foundation/modules/load-more/load-more.min.js?ver=07078a97d66756f213dbca3e379bf084'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/themes/foundation/modules/flickity/flickity.pkgd.min.js?ver=07078a97d66756f213dbca3e379bf084'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/themes/foundation/modules/flickity/flickity-wptouch.min.js?ver=07078a97d66756f213dbca3e379bf084'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/themes/foundation/modules/tappable/tappable.min.js?ver=07078a97d66756f213dbca3e379bf084'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/themes/foundation/modules/tappable/wptouch.tappable.min.js?ver=07078a97d66756f213dbca3e379bf084'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/themes/foundation/modules/fastclick/wptouch.fastclick.min.js?ver=07078a97d66756f213dbca3e379bf084'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/themes/foundation/modules/fastclick/fastclick.min.js?ver=07078a97d66756f213dbca3e379bf084'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/themes/foundation/modules/slideout/slideout.min.js?ver=07078a97d66756f213dbca3e379bf084'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/themes/foundation/modules/slideout/slideout-helper.min.js?ver=07078a97d66756f213dbca3e379bf084'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var wptouchMain = {"ajaxurl":"http:\/\/osxdaily.com\/wp-admin\/admin-ajax.php","siteurl":"\/","security_nonce":"71c175312e","current_shortcode_url":"\/2013\/06\/19\/copy-file-folder-path-mac-os-x\/?wptouch_shortcode=1","query_vars":"[]"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wptouch-pro/include/js/wptouch.min.js?ver=939b77e6da9a9b591dfc5ce10c4767ac'></script>
+<script type='text/javascript' src='https://s0.wp.com/wp-content/js/devicepx-jetpack.js?ver=201945'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/wp-syntax/js/wp-syntax.js?ver=1.1'></script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-includes/js/wp-embed.js?ver=5.2.4'></script>
+<script async="async" type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/akismet/_inc/form.js?ver=4.1.2'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var sharing_js_options = {"lang":"en","counts":"1","is_stats_active":"1"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://cdn.osxdaily.com/wp-content/plugins/jetpack/modules/sharedaddy/sharing.js?ver=7.7.1'></script>
+<script type='text/javascript'>
+var windowOpen;
+			jQuery( document.body ).on( 'click', 'a.share-facebook', function() {
+				// If there's another sharing window open, close it.
+				if ( 'undefined' !== typeof windowOpen ) {
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery( this ).attr( 'href' ), 'wpcomfacebook', 'menubar=1,resizable=1,width=600,height=400' );
+				return false;
+			});
+var windowOpen;
+			jQuery( document.body ).on( 'click', 'a.share-twitter', function() {
+				// If there's another sharing window open, close it.
+				if ( 'undefined' !== typeof windowOpen ) {
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery( this ).attr( 'href' ), 'wpcomtwitter', 'menubar=1,resizable=1,width=600,height=350' );
+				return false;
+			});
+var windowOpen;
+			jQuery( document.body ).on( 'click', 'a.share-linkedin', function() {
+				// If there's another sharing window open, close it.
+				if ( 'undefined' !== typeof windowOpen ) {
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery( this ).attr( 'href' ), 'wpcomlinkedin', 'menubar=1,resizable=1,width=580,height=450' );
+				return false;
+			});
+var windowOpen;
+			jQuery( document.body ).on( 'click', 'a.share-tumblr', function() {
+				// If there's another sharing window open, close it.
+				if ( 'undefined' !== typeof windowOpen ) {
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery( this ).attr( 'href' ), 'wpcomtumblr', 'menubar=1,resizable=1,width=450,height=450' );
+				return false;
+			});
+var windowOpen;
+			jQuery( document.body ).on( 'click', 'a.share-pocket', function() {
+				// If there's another sharing window open, close it.
+				if ( 'undefined' !== typeof windowOpen ) {
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery( this ).attr( 'href' ), 'wpcompocket', 'menubar=1,resizable=1,width=450,height=450' );
+				return false;
+			});
+var windowOpen;
+			jQuery( document.body ).on( 'click', 'a.share-telegram', function() {
+				// If there's another sharing window open, close it.
+				if ( 'undefined' !== typeof windowOpen ) {
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery( this ).attr( 'href' ), 'wpcomtelegram', 'menubar=1,resizable=1,width=450,height=450' );
+				return false;
+			});
+var windowOpen;
+			jQuery( document.body ).on( 'click', 'a.share-skype', function() {
+				// If there's another sharing window open, close it.
+				if ( 'undefined' !== typeof windowOpen ) {
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery( this ).attr( 'href' ), 'wpcomskype', 'menubar=1,resizable=1,width=305,height=665' );
+				return false;
+			});
+</script>
+<script type='text/javascript' src='https://stats.wp.com/e-201945.js' async='async' defer='defer'></script>
+<script type='text/javascript'>
+	_stq = window._stq || [];
+	_stq.push([ 'view', {v:'ext',j:'1:7.7.1',blog:'6690815',post:'38951',tz:'-7',srv:'osxdaily.com'} ]);
+	_stq.push([ 'clickTrackerInit', '6690815', '38951' ]);
+</script>
+
+			<div id="cookie-notice" role="banner" class="cn-bottom wp-default" style="color: #fff; background-color: #000;"><div class="cookie-notice-container"><span id="cn-notice-text">This website and third-party tools use cookies for functional, analytical, and advertising purposes. By continuing to browse the site, closing this banner, scrolling this webpage, or clicking a link, you agree to these cookies. You can review our privacy policy for additional information.</span><a href="#" id="cn-accept-cookie" data-cookie-set="accept" class="cn-set-cookie cn-button wp-default button">I Accept</a><a href="http://osxdaily.com/osxdailycom-privacy-policy/" target="_blank" id="cn-more-info" class="cn-more-info cn-button wp-default button">Privacy Policy</a>
+				</div>
+				
+			</div><style>.page-wrapper { background-color: #ffffff; }
+body, header, .wptouch-menu, .pushit, #search-dropper, .date-circle, .list-view .list-carousel { background-color: #ffffff; }
+.content-wrap a, #slider a p:after { color: #2266bb; }
+.dots li.active, #switch .active { background-color: #2266bb; }
+.bauhaus, form#commentform button#submit, form#commentform input#submit { background-color: #fcfcfc; }
+</style><style>.post-page-head-area.bauhaus {
+padding-top:15px; padding-bottom:15px;}</style><!--Bauhaus v2.2.5-->		</div>
+		
+					<a href="#" class="back-to-top">Back to top</a>
+		
+		
+		<div class="wptouch-mobile-switch">
+
+	
+			<div id="switch">
+			<div>
+				<span class="on active" role="button">mobile</span>
+				<a class="off tappable" role="button" href="?wptouch_switch=desktop" rel="nofollow">desktop</a>
+			</div>
+		</div>
+	
+	
+</div>	</dv><!-- content wrap -->
+	</div><!-- page wrapper -->
+</body>
+</html>
