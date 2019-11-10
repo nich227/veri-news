@@ -8,10 +8,11 @@ var nlu = new NaturalLanguageUnderstandingV1({
   //url: "https://gateway.watsonplatform.net/natural-language-understanding/api/"
 });
 
-var bias_score = 0;
+module.exports = function() {
+  var bias_score = 0;
   var top_bias_phrases = [];
 
-  var filename = "../res/test.html";
+  var filename = "../backend/res/test.html";
   fs.readFile(filename, "utf-8", function(file_error, file_data) {
     if (file_error) {
       console.log(file_error);
@@ -37,7 +38,6 @@ var bias_score = 0;
           return;
         }
         let output = JSON.stringify(res);
-        console.log("OUT: " + output);
         let jsonObj = JSON.parse(output);
         let sumSentiment = 0,
           sumRelevance = 0,
@@ -67,16 +67,6 @@ var bias_score = 0;
               word.emotion.disgust +
               word.emotion.anger) /
             5;
-          console.log(
-            "Sent: " +
-              word.sentiment.score +
-              " // Emo. Avg: " +
-              emotionScore +
-              " // Rel: " +
-              word.relevance +
-              " // Text: " +
-              word.text
-          );
           if (word.relevance != 0) {
             sumSentiment += Math.abs(word.sentiment.score);
             sumEmotionScore += emotionScore;
@@ -94,15 +84,12 @@ var bias_score = 0;
           }
         });
 
-        console.log("Words: " + numWords);
-        console.log("Average sentiment: " + sumSentiment / numWords);
-        console.log("Average Emotional Score: " + sumEmotionScore / numWords);
-
         bias_score =
           0.5 * (sumSentiment / numWords) + 0.5 * (sumEmotionScore / numWords);
-        console.log("Total Bias Score: " + bias_score);
-
-        console.log("Top bias phrases: " + JSON.stringify(top_bias_phrases));
+          
+          let sentiment = {'bias-score':JSON.stringify(bias_score), 'top-bias-phrases':JSON.stringify(top_bias_phrases)};
+          fs.writeFileSync('sentiment-analyze.json', JSON.stringify(sentiment));
       });
     }
   });
+};
