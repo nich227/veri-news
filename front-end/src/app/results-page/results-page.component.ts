@@ -12,7 +12,11 @@ export class ResultsPageComponent implements OnInit {
   constructor(private state: StateService) { }
   
   ngOnInit() {
-    this.state.json.subscribe(bias => this.bias = bias)
+    this.state.json.subscribe(bias => this.bias = bias);
+    let final_score = JSON.parse(this.bias).bias_score * 10;
+    $(document).ready(function() {
+      $('#lin-gauge').attr('value', final_score);
+    });
   }
 
   // @Input() public resultGridList : Array <any> = [];
