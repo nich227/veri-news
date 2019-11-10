@@ -1,18 +1,26 @@
 <!DOCTYPE html>
 <html>
-        
+
 <body>
+    <div class="site-wrapper-inner">
+        <div class="inner cover">
+            <h1 class="cover-heading">Please enter the website you would like to check bias on.</h1>
+        </div>
 
-    
-    <script src="search-page.component.ts"></script>
-    
-        Please enter the website you would like to check bias on.
-        <input type="text" class="form-control" id="url">  
-          
-        <button type="button" class="btn btn-primary" (click)="getWebsiteURL()">Bias Check</button>
+        <script src="search-page.component.ts"></script>
+ 
+        <nav class="navbar navbar-light bg-light" id="url_box">
+                <form class="form-inline">
+                  <input class="form-control mr-sm-2" type="text" placeholder="Website URL" id="url" aria-label="Bias Check">
+                  <button class="btn btn-outline-success my-2 my-sm-0" (click)="getWebsiteURL()" type="button">Bias Check</button>
+                </form>
+              </nav>
+    </div>
 
 
-    
+
+
+
 </body>
 
 </html>
