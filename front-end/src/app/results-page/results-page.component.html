@@ -40,10 +40,17 @@
         value="0"
       ></linear-gauge>
     </div>
-    
-    <div class="card" style="width: 18rem;">
-      <div class="card-body">
-        <angular-tag-cloud [config]="options" [data]="data"></angular-tag-cloud>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <angular-tag-cloud
+              [config]="options"
+              [data]="data"
+            ></angular-tag-cloud>
+          </div>
+        </div>
       </div>
     </div>
   </body>
