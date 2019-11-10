@@ -31,9 +31,11 @@ export class SearchPageComponent implements OnInit {
    */ 
   get_json(website) {
     $.getJSON("https://obscure-reef-11935.herokuapp.com/", function (json) {
-    // return this.http.jsonp("localhost:3000/content?url=website", 'callback');
-      console.log(JSON.stringify(json));
+      // console.log(JSON.stringify(json));
       //bias-score
+       console.log(json.bias_score);
+       console.log(json.top_bias_phrases);
+      
       //top-bias-phrases (is json form)
     });
     this.router.navigate(['/','result']);
