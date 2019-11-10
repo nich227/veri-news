@@ -18,14 +18,4 @@ export class ResultsPageComponent implements OnInit {
       $('#lin-gauge').attr('value', final_score);
     });
   }
-
-  // @Input() public resultGridList : Array <any> = [];
-
-
-  press() {
-    this.state.json.subscribe(result => {
-      this.bias = result; // this set's the username to the default observable value
-      console.log(this.bias);
-    });
-  }
 }
