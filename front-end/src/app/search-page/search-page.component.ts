@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -11,7 +12,7 @@ import { Observable } from 'rxjs';
 })
 export class SearchPageComponent implements OnInit {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   ngOnInit() {
   }
@@ -26,12 +27,13 @@ export class SearchPageComponent implements OnInit {
   }
 
   /*Function get_json takes in a one parameter website which is the url that the api will call.
-   *This function returns the JSON payload that is the result of the call.
+   *This function will mess with the json data
    */ 
   get_json(website) {
     $.getJSON("https://raw.githubusercontent.com/nich227/ncm-utd/master/src/assets/events.json", function (json) {
     // return this.http.jsonp("localhost:3000/content?url=website", 'callback');
       console.log(JSON.stringify(json));
+      // this.router.navigate(['result']);
       //bias-score
       //top-bias-phrases (is json form)
     });
